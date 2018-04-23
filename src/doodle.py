@@ -13,7 +13,7 @@ def _input_fn(data_dir, params, is_training):
     # S3上のTFRecordファイルが`data_dir`にマウントされているので
     # 読み込んでシャッフルしたり前処理してデータを返します
     #=========================================================
-    batch_size  = params.get('batch_size', 512)
+    batch_size  = params.get('batch_size', 96)
     buffer_size = params.get('shuffle_buffer_size', 4096)
     cmp_type    = params.get('tfrecord_compression_type', 'GZIP')
     
@@ -64,15 +64,15 @@ def model_fn(features, labels, mode, params):
     # ハイパーパラメータを取得します
     #=========================================================
     num_classes  = params.get('num_classes', 10)
-    initial_lr   = params.get('initial_learning_rate', 0.005)
-    batch_size   = params.get('batch_size', 512)
+    initial_lr   = params.get('initial_learning_rate', 0.045)
+    batch_size   = params.get('batch_size', 96)
     samples_num  = params.get('samples_per_epoch', 0)
     _decay_steps = int(samples_num * 2.5 / batch_size)
     decay_steps  = params.get('learning_rate_decay_steps', _decay_steps)
-    decay_rate   = params.get('learning_rate_decay_rate', 0.94)
+    decay_rate   = params.get('learning_rate_decay_rate', 0.98)
     init_stddev  = params.get('initializer_normal_stddev', 0.09)
     weight_decay = params.get('regularizer_weight_decay', 0.00004)
-    keep_prob    = params.get('dropout_keep_prob', 0.999)
+    keep_prob    = params.get('dropout_keep_prob', 0.8)
     is_training  = mode == tf.estimator.ModeKeys.TRAIN
     
     # 第一引数のfeaturesが入力データです
@@ -90,7 +90,8 @@ def model_fn(features, labels, mode, params):
             initializer=initializer, regularizer=regularizer):
         
         # Google MobileNet v2 で入力データを変換します
-        logits = mobilenet_v2.classify(image, num_classes, is_training, multiplier=0.25)
+        logits = mobilenet_v2.classify(image, num_classes, is_training,
+                                       multiplier=0.25, dropout_keep_prob=keep_prob)
         
         # 出力をSoftmax関数で確率分布にします
         probabilities = tf.nn.softmax(logits, axis=1)
@@ -141,11 +142,7 @@ def model_fn(features, labels, mode, params):
             initial_lr, global_step, decay_steps, decay_rate, staircase=True)
         update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
         with tf.control_dependencies(update_ops):
-            # ADAMという確率的最適化アルゴリズムを使います
-            #   Kingma, Diederik P., and Jimmy Ba.
-            #   "Adam: A method for stochastic optimization."
-            #   arXiv preprint arXiv:1412.6980 (2014).
-            optimizer = tf.train.AdamOptimizer(learning_rate)
+            optimizer = tf.train.RMSPropOptimizer(learning_rate, decay=0.9, momentum=0.9)
             # total_loss(誤差の総和)が小さくなるように変数を更新します
             fit = optimizer.minimize(total_loss, global_step)
 
