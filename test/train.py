@@ -14,7 +14,7 @@ import sagemaker
 from sagemaker.tensorflow import TensorFlow
 
 def train(source_dir, data_path='doodle/data', training_steps=20000, evaluation_steps=2000,
-          train_instance_type='local', train_instance_count=1,
+          train_instance_type='local', train_instance_count=1, run_tensorboard_locally=True,
           uid=None, role=None, bucket=None, profile_name=None):
     assert os.path.exists(source_dir)
     boto_session = boto3.Session(profile_name=profile_name)
@@ -69,7 +69,7 @@ def train(source_dir, data_path='doodle/data', training_steps=20000, evaluation_
         train_instance_count=train_instance_count,
         train_instance_type=train_instance_type)
 
-    estimator.fit(data_dir)
+    estimator.fit(data_dir, run_tensorboard_locally=run_tensorboard_locally)
 
 if __name__ == '__main__':
     import argparse
@@ -80,7 +80,8 @@ if __name__ == '__main__':
     parser.add_argument('--instance-count', type=int, default=1)
     parser.add_argument('--instance-type', type=str, default='local')
     parser.add_argument('--training-steps', type=int, default=20000)
-    parser.add_argument('--evaluation-steps', type=int, default=2000)
+    parser.add_argument('--run-tensorboard-locally', type=bool, default=True)
+    parser.add_argument('--instance-type', type=str, default='local')
     parser.add_argument('--uid', type=str, default=None)
     parser.add_argument('--role', type=str, default=None)
     parser.add_argument('--bucket', type=str, default=None)
@@ -90,5 +91,6 @@ if __name__ == '__main__':
           evaluation_steps=args.evaluation_steps,
           train_instance_type=args.instance_type,
           train_instance_count=args.instance_count,
+          run_tensorboard_locally=args.run_tensorboard_locally,
           uid=args.uid, role=args.role, bucket=args.bucket,
           profile_name=args.profile)
