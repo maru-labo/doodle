@@ -1,3 +1,0 @@
-[submodule "src/mobilenet"]
-	path = src/mobilenet
-	url = https://github.com/ornew/mobilenet.git
