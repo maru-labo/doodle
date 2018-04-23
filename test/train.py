@@ -33,7 +33,8 @@ def train(source_dir, data_path='doodle/data', training_steps=20000, evaluation_
     }
 
     output_path     = 's3://{}/doodle/model/{}/export'.format(bucket, uid)
-    checkpoint_path = 's3://{}/doodle/model/{}/ckpt'.format(bucket, uid)
+    checkpoint_path = 's3://{}/doodle/model/{}/ckpt'  .format(bucket, uid)
+    code_location   = 's3://{}/doodle/model/{}/source'.format(bucket, uid)
     base_job_name   = 'doodle-training-job-{}'.format(uid)
     data_dir        = 's3://{}/{}'.format(bucket, data_path)
 
@@ -42,6 +43,7 @@ def train(source_dir, data_path='doodle/data', training_steps=20000, evaluation_
     logger.info('data_dir             : {}'.format(data_dir))
     logger.info('output_path          : {}'.format(output_path))
     logger.info('checkpoint_path      : {}'.format(checkpoint_path))
+    logger.info('code_location        : {}'.format(code_location))
     logger.info('base_job_name        : {}'.format(base_job_name))
     logger.info('training_steps       : {}'.format(training_steps))
     logger.info('evaluation_steps     : {}'.format(evaluation_steps))
@@ -54,6 +56,7 @@ def train(source_dir, data_path='doodle/data', training_steps=20000, evaluation_
 
         output_path=output_path,
         checkpoint_path=checkpoint_path,
+        code_location=code_location,
         base_job_name=base_job_name,
 
         source_dir=source_dir,
