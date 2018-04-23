@@ -7,3 +7,6 @@ __pycache__/
 *.gz
 *.zip
 
+data/
+raw_data/
+
