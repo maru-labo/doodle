@@ -1,12 +1,14 @@
-# MaruLabo Doodle App
+This repository is under experimental development.
 
-[The Quick, Draw! Dataset](https://github.com/googlecreativelab/quickdraw-dataset)を使ったアプリケーションです。
+# Doodle Image Recognition by MaruLabo
 
-1. モデル構築プログラム
-2. 解説ノートブック
-3. 実際に作成したモデルを利用するWebアプリケーション
+It is a classification model of doodle image.
+The learning data uses "[The Quick, Draw! Dataset](https://github.com/googlecreativelab/quickdraw-dataset)".
 
-## The Quick, Draw! Datasetについて
+## About Datasets
 
-This data made available by Google, Inc. under the Creative Commons Attribution 4.0 International license.
+Data is not included in this repository.
+The data setup program downloads "The Quick, Draw! Dataset".
+
+It data made available by Google, Inc. under the Creative Commons Attribution 4.0 International license.
 https://creativecommons.org/licenses/by/4.0/
