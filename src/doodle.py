@@ -3,7 +3,6 @@
 import os
 import tensorflow as tf
 
-import mobilenet.v2 as mobilenet_v2
 import metrics
 
 def _input_fn(data_dir, params, is_training):
