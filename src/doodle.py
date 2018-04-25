@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import os
+import six
 import tensorflow as tf
 
 import metrics
@@ -97,8 +98,14 @@ def model_fn(features, labels, mode, params):
             'classes'      : tf.argmax(logits, axis=1),
         }
 
-    # `mode`は実行モードです 推論(PREDICT)、学習(TRAIN)、評価(EVAL)モードがあります
-    # 推論モードの場合は、以降の学習の計算を実行する必要はないので結果を返します
+    #=========================================================
+    # 推論モードならモデルの出力を返します
+    #=========================================================
+    # `mode`は実行モードです。モードは以下の3つがあります。
+    #     - tf.estimator.ModeKeys.PREDICT : 推論モードです
+    #     - tf.estimator.ModeKeys.TRAIN   : 学習モードです
+    #     - tf.estimator.ModeKeys.EVAL    : 評価モードです
+    # 推論モードの場合は、学習を実行する必要はないため、結果を返して終わります。
     if mode == tf.estimator.ModeKeys.PREDICT:
         return tf.estimator.EstimatorSpec(mode=mode,
             predictions=predictions,
@@ -116,28 +123,62 @@ def model_fn(features, labels, mode, params):
         
         # モデルで追加された全ての誤差の総和を取得します
         total_loss = tf.losses.get_total_loss()
+    
+    #=========================================================
+    # 正答率など、モデルの評価値を計算します
+    #=========================================================
+    metric_ops = metrics.calculate(labels, predictions['classes'], num_classes)
+
+    global_step = tf.train.get_or_create_global_step()
+    update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
 
     #=========================================================
     # モデルを学習(=パラメータを最適化)します
     #=========================================================
     with tf.variable_scope('optimizer'):
-        global_step = tf.train.get_or_create_global_step()
-        update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
         with tf.control_dependencies(update_ops):
             # total_loss(誤差の総和)が小さくなるように変数を更新します
             optimizer = tf.train.AdamOptimizer(learning_rate)
             fit = optimizer.minimize(total_loss, global_step)
 
     #=========================================================
-    # 精度などの値を計算してサマリにまとめます
+    # 変数をサマリにまとめます
     #=========================================================
-    with tf.variable_scope('metrics'):  
-        metrics.add_summary(labels, predictions['classes'], num_classes)
-    
-    # 計算した値はサマリに追加することでログとしてS3に保存できます
-    # ログはTensorBoardなどでグラフ化することができます
+    # 任意の値はサマリに追加することでログとしてS3に保存できます。
+    # ログはTensorBoardなどでグラフ化することができるため、
+    # 計算した誤差やメトリクス、入力画像などをログにしておきます。
+    for name, metric in six.iteritems(metric_ops):
+        tf.summary.scalar(name, metric[1])
     tf.summary.image('image', image, family='inputs')
     tf.summary.scalar('total_loss', total_loss, family='losses')
+    summary_op = tf.summary.merge_all()
+
+    #=========================================================
+    # SageMakerの場合は、これでモデルので定義は完了です！
+    #=========================================================
+    if params.get('sagemaker_job_name', None) is not None:
+        return tf.estimator.EstimatorSpec(mode=mode,
+            loss=total_loss,
+            train_op=fit,
+            eval_metric_ops=metric_ops)
     
+    
+    # 以下はローカル実行テスト用です。
+    training_hooks = [
+        tf.train.SummarySaverHook(
+            save_steps=1,
+            output_dir='./test/logs/doodle.train',
+            summary_op=summary_op)
+    ]
+    evaluation_hooks = [
+        tf.train.SummarySaverHook(
+            save_steps=5,
+            output_dir='./test/logs/doodle.eval',
+            summary_op=summary_op)
+    ]
     return tf.estimator.EstimatorSpec(mode=mode,
-        loss=total_loss, train_op=fit)
+        loss=total_loss,
+        train_op=fit,
+        eval_metric_ops=metric_ops,
+        evaluation_hooks=evaluation_hooks,
+        training_hooks=training_hooks)
