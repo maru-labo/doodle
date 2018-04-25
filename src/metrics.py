@@ -50,7 +50,7 @@ Accuracyではどちらで間違えているのかがわかりません。
 
 import tensorflow as tf
 
-def add_summary(labels, classes, num_classes):
+def calculate(labels, classes, num_classes):
     cm = tf.confusion_matrix(labels, classes, num_classes=num_classes, dtype=tf.float32)
     ln = tf.reduce_sum(cm)
     tp = tf.diag_part(cm)
@@ -58,45 +58,60 @@ def add_summary(labels, classes, num_classes):
     fn = tf.reduce_sum(cm, axis=0) - tp
     tn = ln - tp - fp - fn
     eps = tf.convert_to_tensor(1e-7)
-    micro_metrics(tp, fp, tn, fn, eps)
-    macro_metrics(tp, fp, tn, fn, num_classes, eps)
+    _micros = micro_metrics(tp, fp, tn, fn, eps)
+    _macros = macro_metrics(tp, fp, tn, fn, num_classes, eps)
+
+    return {
+        **_micros,
+        **_macros,
+    }
 
 def micro_metrics(tp, fp, tn, fn, eps):
-    tp_sum = tf.reduce_sum(tp)
-    fp_sum = tf.reduce_sum(fp)
-    tn_sum = tf.reduce_sum(tn)
-    fn_sum = tf.reduce_sum(fn)
-    accuracy  = (tp_sum + tn_sum) / (tp_sum + fp_sum + tn_sum + fn_sum)
-    precision = tp_sum / (tp_sum + fp_sum + eps)
-    recall    = tp_sum / (tp_sum + fn_sum + eps)
-    f_measure = 2 * precision * recall / (precision + recall + eps)
-    
-    family = 'micro_metrics'
-    tf.summary.scalar('accuracy' , accuracy , family=family)
-    tf.summary.scalar('precision', precision, family=family)
-    tf.summary.scalar('recall'   , recall   , family=family)
-    tf.summary.scalar('f_measure', f_measure, family=family)
+    with tf.name_scope('micro_average'):
+        tp_sum = tf.reduce_sum(tp)
+        fp_sum = tf.reduce_sum(fp)
+        tn_sum = tf.reduce_sum(tn)
+        fn_sum = tf.reduce_sum(fn)
+        accuracy  = (tp_sum + tn_sum) / (tp_sum + fp_sum + tn_sum + fn_sum)
+        precision = tp_sum / (tp_sum + fp_sum + eps)
+        recall    = tp_sum / (tp_sum + fn_sum + eps)
+        f_measure = 2 * precision * recall / (precision + recall + eps)
+
+        return {
+            'micro_average/accuracy' : tf.metrics.mean_tensor(accuracy),
+            'micro_average/precision': tf.metrics.mean_tensor(precision),
+            'micro_average/recall'   : tf.metrics.mean_tensor(recall),
+            'micro_average/f_measure': tf.metrics.mean_tensor(f_measure),
+        }
 
 def macro_metrics(tp, fp, tn, fn, num_classes, eps):
-    accuracies = (tp + tn) / (tp + fp + tn + fn)
-    precisions = tp / (tp + fp + eps)
-    recalls    = tp / (tp + fn + eps)
-    f_measures = 2 * precisions * recalls / (precisions + recalls + eps)
-    
+    with tf.name_scope('macro_average'):
+        accuracies = (tp + tn) / (tp + fp + tn + fn)
+        precisions = tp / (tp + fp + eps)
+        recalls    = tp / (tp + fn + eps)
+        f_measures = 2 * precisions * recalls / (precisions + recalls + eps)
+
+        accuracy  = tf.reduce_mean(accuracies)
+        precision = tf.reduce_mean(precisions)
+        recall    = tf.reduce_mean(recalls)
+        f_measure = tf.reduce_mean(f_measures)
+        
+        metrics = {
+            'macro_average/accuracy' : tf.metrics.mean_tensor(accuracy),
+            'macro_average/precision': tf.metrics.mean_tensor(precision),
+            'macro_average/recall'   : tf.metrics.mean_tensor(recall),
+            'macro_average/f_measure': tf.metrics.mean_tensor(f_measure),
+        }
+
     for i in range(num_classes):
-        family = 'metric_{}'.format(i)
-        tf.summary.scalar('accuracy' , accuracies[i], family=family)
-        tf.summary.scalar('precision', precisions[i], family=family)
-        tf.summary.scalar('recall'   , recalls[i]   , family=family)
-        tf.summary.scalar('f_measure', f_measures[i], family=family)
+        family = 'macro_class_{}'.format(i)
+        with tf.name_scope(family):
+            metrics = {
+                **metrics,
+                family+'/accuracy' : tf.metrics.mean_tensor(accuracies[i]),
+                family+'/precision': tf.metrics.mean_tensor(precisions[i]),
+                family+'/recall'   : tf.metrics.mean_tensor(recalls[i]),
+                family+'/f_measure': tf.metrics.mean_tensor(f_measures[i]),
+            }
 
-    accuracy  = tf.reduce_mean(accuracies)
-    precision = tf.reduce_mean(precisions)
-    recall    = tf.reduce_mean(recalls)
-    f_measure = tf.reduce_mean(f_measures)
-
-    family = 'macro_metrics'
-    tf.summary.scalar('accuracy' , accuracy , family=family)
-    tf.summary.scalar('precision', precision, family=family)
-    tf.summary.scalar('recall'   , recall   , family=family)
-    tf.summary.scalar('f_measure', f_measure, family=family)
+    return metrics
