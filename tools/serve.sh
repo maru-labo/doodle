@@ -3,7 +3,7 @@
 model_dir=/var/lib/tensorflow-model
 
 docker run -it --rm \
-    -v $(pwd)/model:$model_dir \
+    -v $(pwd)/serving:$model_dir \
     -p 8500:8500 \
     ornew/tensorflow-serving-api-server \
     tensorflow_model_server \
