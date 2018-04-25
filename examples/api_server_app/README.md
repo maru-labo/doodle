@@ -5,6 +5,8 @@ This application can test the model on the web.
 The `/api/prediction` endpoint proxies to a specific TensorFlow Serving API.
 Therefore, the model TensorFlow Serving Server needs to be running somewhere.
 
+![Prediction Cat](img/cat.png)
+
 ## Usage
 
 Resolve dependencies.
