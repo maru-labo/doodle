@@ -5,8 +5,8 @@ import tensorflow as tf
 
 from grpc.beta.implementations import insecure_channel
 
-from sagemaker.tensorflow.tensorflow_serving.apis.predict_pb2 import PredictRequest
-from sagemaker.tensorflow.tensorflow_serving.apis.prediction_service_pb2 import beta_create_PredictionService_stub
+from tensorflow_serving.apis.predict_pb2 import PredictRequest
+from tensorflow_serving.apis.prediction_service_pb2 import beta_create_PredictionService_stub
 
 import falcon
 
