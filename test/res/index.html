@@ -1,0 +1,189 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            #app {
+                max-width: 600px;
+                margin: 0 auto;
+                text-align: center;
+            }
+            #inputs {
+                display : block;
+                width   : 280px;
+                height  : 280px;
+                padding : 0;
+                margin  : 1em auto;
+                border  : solid 1px;
+            }
+            .result-container {
+                display : block;
+                width : 420px;
+                height: 320px;
+                padding : 0;
+                margin  : 1em auto;
+            }
+        </style>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.7.2/dist/Chart.min.js"></script>
+        <script>
+            var app = new Vue({
+                data: {
+                    canvas: null,
+                    context: null,
+                    fook: false,
+                    x: 0,
+                    y: 0,
+                    originX: 0,
+                    originY: 0,
+                    result: null,
+                    classes: '-',
+                    labels: [
+                        'apple', 'bed', 'cat', 'dog', 'eye',
+                        'fish', 'grass', 'hand', 'ice cream', 'jacket',
+                    ],
+                },
+                mounted(){
+                    this.canvas = this.$el.querySelector('#inputs')
+                    this.canvas.addEventListener("touchstart", this.onDown, false)
+                    this.canvas.addEventListener("touchmove", this.onMove, false)
+                    this.canvas.addEventListener("touchend", this.onUp, false)
+                    this.canvas.addEventListener("mousedown", this.onMouseDown, false)
+                    this.canvas.addEventListener("mousemove", this.onMouseMove, false)
+                    this.canvas.addEventListener("mouseup", this.onMouseUp, false)
+                    this.canvas.setAttribute('width', 28)
+                    this.canvas.setAttribute('height', 28)
+                    this.context = this.canvas.getContext('2d')
+                    this.context.scale(0.1, 0.1)
+                    this.context.strokeStyle ="#000000"
+                    this.context.lineWidth = 10
+                    this.context.lineJoin = "round"
+                    this.context.lineCap = "round"
+                    this.clear()
+                    this.chart = new Chart(this.$el.querySelector('#result'), {
+                        type: 'bar',
+                        data: {
+                            labels: this.labels,
+                            datasets: [{
+                                label: 'Predictions',
+                                data: [0,0,0,0,0,0,0,0,0,0,0],
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        max: 1,
+                                        min: 0,
+                                        stepSize: 0.1
+                                    }
+                                }]
+                            }
+                        }
+                    })
+                },
+                methods: {
+                    clear(){
+                        this.context.fillStyle = 'rgb(255,255,255)'
+                        this.context.fillRect(0, 0,
+                            this.canvas.getBoundingClientRect().width,
+                            this.canvas.getBoundingClientRect().height)
+                    },
+                    recognize(){
+                        var body = JSON.stringify({
+                            'image': this.getPixels()
+                        })
+                        var req = new Request('/api/prediction', {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json, text/plain, */*',
+                                'Content-Type': 'application/json'
+                            },
+                            body: body,
+                        })
+                        var thiz = this
+                        fetch(req).then(function(res) {
+                            return res.json()
+                        }).then(function(res) {
+                            console.log(res)
+                            thiz.classes = res.classes[0]
+                            thiz.chart.data.datasets[0].data = res.probabilities[0]
+                            thiz.chart.update()
+                            return result
+                        }).catch(console.error)
+                    },
+                    getPixels(){
+                        let pixels = this.context.getImageData(0, 0, 28, 28).data
+                        let result = []
+                        for(var y = 0; y < 28; ++y) {
+                            for(var x = 0; x < 28; ++x) {
+                            var i = (y * 28 + x) * 4
+                                result.push((255 - pixels[i]) / 255)
+                            }
+                        }
+                        return result
+                    },
+                    drawLine(){
+                        this.context.beginPath()
+                        this.context.moveTo(this.originX, this.originY)
+                        this.context.lineTo(this.x, this.y)
+                        this.context.stroke()
+                    },
+                    onDown(event){
+                        this.fook = true
+                        this.originX = event.touches[0].pageX-event.target.getBoundingClientRect().left
+                        this.originY = event.touches[0].pageY-event.target.getBoundingClientRect().top
+                        event.stopPropagation()
+                    },
+                    onMove(event){
+                        if(this.fook){
+                            this.x = event.touches[0].pageX-event.target.getBoundingClientRect().left
+                            this.y = event.touches[0].pageY-event.target.getBoundingClientRect().top
+                            this.drawLine()
+                            this.originX = this.x
+                            this.originY = this.y
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+                    },
+                    onUp(event){
+                        this.fook = false
+                        event.stopPropagation()
+                    },
+                    onMouseDown(event){
+                        this.originX = event.clientX-event.target.getBoundingClientRect().left
+                        this.originY = event.clientY-event.target.getBoundingClientRect().top
+                        this.fook = true
+                    },
+                    onMouseMove(event){
+                        if(this.fook){
+                            this.x = event.clientX-event.target.getBoundingClientRect().left
+                            this.y = event.clientY-event.target.getBoundingClientRect().top
+                            this.drawLine()
+                            this.originX = this.x
+                            this.originY = this.y
+                        }
+                    },
+                    onMouseUp(event){
+                        this.fook = false
+                    },
+                },
+            })
+        </script>
+    </head>
+    <body>
+        <div id="app">
+            <canvas id="inputs" width="28" height="28"></canvas>
+            <button @click="clear">Clear</button>
+            <button @click="recognize">Predict</button>
+            <div class="result-container">
+                <div>{{labels[classes]}}</div>
+                <canvas id="result"></canvas>
+            </div>
+        </div>
+        <script>
+            app.$mount('#app')
+        </script>
+    </body>
+</html>
