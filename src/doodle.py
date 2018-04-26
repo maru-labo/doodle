@@ -6,60 +6,66 @@ import tensorflow as tf
 
 import metrics
 
+def train_input_fn(training_dir, params):
+    """
+    学習時の入力データを返します
+    """
+    return _input_fn(training_dir, params, is_training=True)
+
+def eval_input_fn(training_dir, params):
+    """
+    評価時の入力データを返します
+    """
+    return _input_fn(training_dir, params, is_training=False)
+
 def _input_fn(data_dir, params, is_training):
-    #=========================================================
-    # 学習/評価時の入力データを返します
-    #
-    # S3上のTFRecordファイルが`data_dir`にマウントされているので
-    # 読み込んでシャッフルしたり前処理してデータを返します
-    #=========================================================
+    """
+    学習/評価時の入力データを返します
+
+    S3上のTFRecordファイルが`data_dir`にマウントされているので
+    読み込んでシャッフルしたり前処理してデータを返します
+    """
     batch_size  = params.get('batch_size', 96)
     buffer_size = params.get('shuffle_buffer_size', 4096)
     cmp_type    = params.get('tfrecord_compression_type', 'GZIP')
+    train_file  = params.get('train_tfrecord_file', 'train.tfr')
+    test_file   = params.get('test_tfrecord_file', 'test.tfr')
 
-    if is_training:
-        tfrecord = params.get('train_tfrecord_file')
-    else:
-        tfrecord = params.get('test_tfrecord_file')
-    tfrecord = os.path.join(data_dir, tfrecord)
-
-    def _parse_record(record):
-        features = tf.parse_single_example(record,  {
-            'image': tf.FixedLenFeature([28, 28, 1], tf.float32),
-            'label': tf.FixedLenFeature([]         , tf.int64),
-        })
-        label = features.pop('label')
-        return features, label
+    tfrecord = os.path.join(data_dir,
+        train_file if is_training else test_file)
 
     return (tf.data.TFRecordDataset(tfrecord, compression_type=cmp_type)
-        .map(_parse_record)
+        .map(_parse_example)
         .shuffle(buffer_size)
         .batch(batch_size)
         .repeat(-1 if is_training else 1)
         .make_one_shot_iterator()
         .get_next())
 
-def train_input_fn(training_dir, params):
-    #=========================================================
-    # 学習時の入力データを返します
-    #=========================================================
-    return _input_fn(training_dir, params, is_training=True)
-
-def eval_input_fn(training_dir, params):
-    #=========================================================
-    # 評価時の入力データを返します
-    #=========================================================
-    return _input_fn(training_dir, params, is_training=False)
+def _parse_example(example):
+    """
+    Example Protoをパースする関数です
+    TFRecordの各レコードはExampleにエンコードしてあります
+    """
+    features = tf.parse_single_example(example,  {
+        'image': tf.FixedLenFeature([28, 28, 1], tf.float32),
+        'label': tf.FixedLenFeature([]         , tf.int64),
+    })
+    label = features.pop('label')
+    return features, label
 
 def serving_input_fn(params):
-    #=========================================================
-    # サービング時の入力形式を定義します
-    #=========================================================
+    """
+    サービング時の入力形式を定義します
+    """
     return tf.estimator.export.build_raw_serving_input_receiver_fn({
         'image': tf.placeholder(tf.float32, [None, 28, 28, 1], name='image')
     })()
 
 def model_fn(features, labels, mode, params):
+    """
+    モデルを定義します
+    """
     #=========================================================
     # ハイパーパラメータを取得します
     #=========================================================
@@ -78,7 +84,7 @@ def model_fn(features, labels, mode, params):
     initializer = tf.truncated_normal_initializer(stddev=init_stddev)
 
     #=========================================================
-    # モデルを定義します
+    # ニューラルネットワークを定義します
     #=========================================================
     with tf.variable_scope('model', initializer=initializer):
         x = image
@@ -91,6 +97,7 @@ def model_fn(features, labels, mode, params):
         x = tf.layers.dropout(x, rate=dropout_rate, training=is_training)
         x = tf.layers.dense(x, 10)
         logits = x
+        assert logits.get_shape().as_list() == [None, num_classes]
 
         # 予測結果: クラスごとの離散確率分布、最も確率の高いクラスのインデクス
         predictions = {
@@ -129,32 +136,29 @@ def model_fn(features, labels, mode, params):
     #=========================================================
     metric_ops = metrics.calculate(labels, predictions['classes'], num_classes)
 
-    global_step = tf.train.get_or_create_global_step()
-    update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
-
     #=========================================================
     # モデルを学習(=パラメータを最適化)します
     #=========================================================
-    with tf.variable_scope('optimizer'):
-        with tf.control_dependencies(update_ops):
-            # total_loss(誤差の総和)が小さくなるように変数を更新します
-            optimizer = tf.train.AdamOptimizer(learning_rate)
-            fit = optimizer.minimize(total_loss, global_step)
+    global_step = tf.train.get_or_create_global_step()
+    update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+    
+    with tf.variable_scope('optimizer'), tf.control_dependencies(update_ops):
+        # total_loss(誤差の総和)が小さくなるように変数を更新します
+        optimizer = tf.train.AdamOptimizer(learning_rate)
+        fit = optimizer.minimize(total_loss, global_step)
 
     #=========================================================
     # 変数をサマリにまとめます
     #=========================================================
-    # 任意の値はサマリに追加することでログとしてS3に保存できます。
+    # 任意の値はサマリに追加することでログとして保存できます。
     # ログはTensorBoardなどでグラフ化することができるため、
     # 計算した誤差やメトリクス、入力画像などをログにしておきます。
-    for name, metric in six.iteritems(metric_ops):
-        tf.summary.scalar(name, metric[1])
-    tf.summary.image('image', image, family='inputs')
-    tf.summary.scalar('total_loss', total_loss, family='losses')
+    tf.summary.image('image', image)
+    tf.summary.scalar('total_loss', total_loss)
     summary_op = tf.summary.merge_all()
 
     #=========================================================
-    # SageMakerの場合は、これでモデルので定義は完了です！
+    # SageMakerの場合は、これでモデルの定義は完了です！
     #=========================================================
     if params.get('sagemaker_job_name', None) is not None:
         return tf.estimator.EstimatorSpec(mode=mode,
