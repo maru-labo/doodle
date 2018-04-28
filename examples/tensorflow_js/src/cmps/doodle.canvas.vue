@@ -1,12 +1,12 @@
-<template lang="pug">
+<template lang='pug'>
   section
-    canvas
+    canvas(width='28' height='28')
     .buttons.is-centered
-      .button(@click="clear") Clear
-      .button.is-primary(@click="recognize") Recognize
+      .button(@click='clear') Clear
+      .button.is-primary(@click='recognize') Recognize
 </template>
 
-<style lang="stylus" scoped>
+<style lang='stylus' scoped>
   canvas
     display block
     width 280px
@@ -19,8 +19,6 @@
 <script>
   export default {
     data: () => ({
-      canvas: null,
-      context: null,
       fook: false,
       x: 0,
       y: 0,
@@ -28,57 +26,59 @@
       originY: 0,
     }),
     mounted(){
-      this.canvas = this.$el.querySelector('canvas')
-      this.canvas.addEventListener("touchstart", this.onDown, false)
-      this.canvas.addEventListener("touchmove", this.onMove, false)
-      this.canvas.addEventListener("touchend", this.onUp, false)
-      this.canvas.addEventListener("mousedown", this.onMouseDown, false)
-      this.canvas.addEventListener("mousemove", this.onMouseMove, false)
-      this.canvas.addEventListener("mouseup", this.onMouseUp, false)
-      this.canvas.setAttribute('width', 28)
-      this.canvas.setAttribute('height', 28)
-      this.context = this.canvas.getContext('2d')
-      this.context.scale(0.1, 0.1)
-      this.context.strokeStyle="#000000"
-      this.context.lineWidth = 10
-      this.context.lineJoin  = "round"
-      this.context.lineCap   = "round"
+      this._canvas = this.$el.querySelector('canvas')
+      this._canvas.addEventListener('touchstart', this.onDown, {passive: true})
+      this._canvas.addEventListener('touchmove', this.onMove, {passive: true})
+      this._canvas.addEventListener('touchend', this.onUp, {passive: true})
+
+      this._canvas.addEventListener('mousedown', this.onMouseDown, false)
+      this._canvas.addEventListener('mousemove', this.onMouseMove, false)
+      this._canvas.addEventListener('mouseup', this.onMouseUp, false)
+      this._context = this._canvas.getContext('2d')
+      this._context.scale(0.1, 0.1)
+      this._context.strokeStyle = 'black'
+      this._context.lineWidth = 10
+      this._context.lineJoin = 'round'
+      this._context.lineCap = 'round'
       this.clear()
     },
     methods: {
       clear(){
-        this.context.fillStyle = 'rgb(255,255,255)'
-        this.context.fillRect(0, 0,
-          this.canvas.getBoundingClientRect().width,
-          this.canvas.getBoundingClientRect().height)
+        this._context.fillStyle = 'white'
+        const {width, height} = this._canvas.getBoundingClientRect()
+        this._context.fillRect(0, 0, width, height)
         this.$emit('clear')
       },
       recognize(){
         this.$emit('recognize', this.getImageData())
       },
       getImageData(){
-        return this.context.getImageData(0, 0, 28, 28)
+        return this._context.getImageData(0, 0, 28, 28)
       },
       drawLine(){
-        this.context.beginPath()
-        this.context.moveTo(this.originX, this.originY)
-        this.context.lineTo(this.x, this.y)
-        this.context.stroke()
+        this._context.beginPath()
+        this._context.moveTo(this.originX, this.originY)
+        this._context.lineTo(this.x, this.y)
+        this._context.stroke()
       },
       onDown(event){
+        const {left, top} = event.target.getBoundingClientRect()
+        const {pageX, pageY} = event.touches[0]
+        this.originX = pageX - left
+        this.originY = pageY - top
         this.fook = true
-        this.originX = event.touches[0].pageX-event.target.getBoundingClientRect().left
-        this.originY = event.touches[0].pageY-event.target.getBoundingClientRect().top
         event.stopPropagation()
       },
       onMove(event){
         if(this.fook){
-          this.x = event.touches[0].pageX-event.target.getBoundingClientRect().left
-          this.y = event.touches[0].pageY-event.target.getBoundingClientRect().top
+          const {left, top} = event.target.getBoundingClientRect()
+          const {pageX, pageY} = event.touches[0]
+          this.x = pageX - left
+          this.y = pageY - top
           this.drawLine()
           this.originX = this.x
           this.originY = this.y
-          event.preventDefault()
+          //event.preventDefault() // passive listener will be ignored this.
           event.stopPropagation()
         }
       },
@@ -87,21 +87,23 @@
         event.stopPropagation()
       },
       onMouseDown(event){
-        this.originX = event.clientX-event.target.getBoundingClientRect().left
-        this.originY = event.clientY-event.target.getBoundingClientRect().top
-        this.fook = true
+        const {left, top} = event.target.getBoundingClientRect()
+        const {clientX, clientY} = event
+        this.originX = clientX - left
+        this.originY = clientY - top
       },
       onMouseMove(event){
-        if(this.fook){
-          this.x = event.clientX-event.target.getBoundingClientRect().left
-          this.y = event.clientY-event.target.getBoundingClientRect().top
+        if(event.buttons == 1){ // Left clicking.
+          const {left, top} = event.target.getBoundingClientRect()
+          const {clientX, clientY} = event
+          this.x = clientX - left
+          this.y = clientY - top
           this.drawLine()
           this.originX = this.x
           this.originY = this.y
         }
       },
       onMouseUp(event){
-        this.fook = false
       },
     },
   }
