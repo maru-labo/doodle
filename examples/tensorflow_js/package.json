@@ -1,0 +1,35 @@
+{
+  "name": "example_tensorflow_js",
+  "version": "1.0.0",
+  "author": "Arata Furukawa",
+  "license": "MIT",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "build": "parcel build src/index.pug",
+    "watch": "parcel watch src/index.pug",
+    "serve": "parcel src/index.pug"
+  },
+  "devDependencies": {
+    "@tensorflow/tfjs-converter": "^0.2.1",
+    "@tensorflow/tfjs-core": "^0.9.0",
+    "@vue/component-compiler-utils": "^1.2.1",
+    "autoprefixer": "^8.4.1",
+    "babel-core": "^6.26.3",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "parcel-bundler": "^1.7.1",
+    "parcel-plugin-vue": "^1.5.0",
+    "postcss-modules": "^1.1.0",
+    "pug": "^2.0.3",
+    "stylus": "^0.54.5",
+    "vue-hot-reload-api": "^2.3.0",
+    "vue-template-compiler": "^2.5.16"
+  },
+  "dependencies": {
+    "buefy": "^0.6.5",
+    "chart.js": "^2.7.2",
+    "vue": "^2.5.16"
+  }
+}
