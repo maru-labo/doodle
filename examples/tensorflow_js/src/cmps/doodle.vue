@@ -9,7 +9,7 @@
     section.section
       .container.is-centerd
         .contents
-          p Available Tags:
+          p Available Classes:
         .tags.is-centered
           span.tag.is-info.is-medium(v-for='label in labels') {{label}}
         doodle-canvas(@clear='clear' @recognize='recognize')
