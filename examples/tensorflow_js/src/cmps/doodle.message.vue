@@ -19,10 +19,10 @@
 <style lang="stylus" scoped>
   .prob0, .prob3, .prob5, .prob7, .prob9
     font-size: 2em
-    margin: 0.3em
+    padding: 0.3em
   .comment-container
     text-align: center
-    height: 4em
+    height: 5em
 </style>
 
 <script>
