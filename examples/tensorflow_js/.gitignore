@@ -1,0 +1,11 @@
+node_modules/
+public/
+dist/
+.cache/
+
+*.swp
+*.tar
+*.gz
+*.zip
+*.log
+
