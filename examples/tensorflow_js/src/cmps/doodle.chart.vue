@@ -48,6 +48,11 @@
           responsive: true,
           maintainAspectRatio: false,
           scales: {
+            xAxes: [{
+              ticks: {
+                autoSkip: false
+              }
+            }],
             yAxes: [{
               ticks: {
                 max: 1,
