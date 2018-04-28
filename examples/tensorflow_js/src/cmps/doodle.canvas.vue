@@ -27,9 +27,9 @@
     }),
     mounted(){
       this._canvas = this.$el.querySelector('canvas')
-      this._canvas.addEventListener('touchstart', this.onDown, {passive: true})
-      this._canvas.addEventListener('touchmove', this.onMove, {passive: true})
-      this._canvas.addEventListener('touchend', this.onUp, {passive: true})
+      this._canvas.addEventListener('touchstart', this.onDown, {passive: false, capture: true})
+      this._canvas.addEventListener('touchmove', this.onMove, {passive: false, capture: true})
+      this._canvas.addEventListener('touchend', this.onUp, {passive: false, capture: true})
 
       this._canvas.addEventListener('mousedown', this.onMouseDown, false)
       this._canvas.addEventListener('mousemove', this.onMouseMove, false)
@@ -62,23 +62,23 @@
         this._context.stroke()
       },
       onDown(event){
-        const {left, top} = event.target.getBoundingClientRect()
-        const {pageX, pageY} = event.touches[0]
-        this.originX = pageX - left
-        this.originY = pageY - top
         this.fook = true
+        const {left, top} = event.target.getBoundingClientRect()
+        const {clientX, clientY} = event.touches[0]
+        this.originX = clientX - left
+        this.originY = clientY - top
         event.stopPropagation()
       },
       onMove(event){
         if(this.fook){
           const {left, top} = event.target.getBoundingClientRect()
-          const {pageX, pageY} = event.touches[0]
-          this.x = pageX - left
-          this.y = pageY - top
+          const {clientX, clientY} = event.touches[0]
+          this.x = clientX - left
+          this.y = clientY - top
           this.drawLine()
           this.originX = this.x
           this.originY = this.y
-          //event.preventDefault() // passive listener will be ignored this.
+          event.preventDefault() // passive listener will be ignored this.
           event.stopPropagation()
         }
       },
