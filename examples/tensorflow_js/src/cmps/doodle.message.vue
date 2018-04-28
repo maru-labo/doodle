@@ -1,7 +1,7 @@
 <template lang="pug">
   .comment-container
     template(v-if='result.label == "-"')
-      | Please draw one of the tags.
+      | Please draw one of the classes.
     template(v-else-if='result.prob <= 0.3')
       p Sorry, I cannot understand...
     template(v-else)
