@@ -6,7 +6,7 @@
 <style lang="stylus" scoped>
   .chart-container
       display : block
-      width   : 420px
+      width   : 100%
       height  : 380px
       padding : 0
       margin  : 1em auto
