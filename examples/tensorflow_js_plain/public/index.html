@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<!-- ref: https://github.com/yukagil/tfjs-mnist-cnn-demo/ -->
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>Doodle Recognition with TensorFlow.js</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" href="./marulabo-icon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.0/css/bulma.min.css">
+    <link rel="stylesheet" href="./main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js"></script>
+    <script src="https://cdn.rawgit.com/hideya/jsutils/0.1/scientificToDecimal.min.js"></script>
+    <script src="https://cdn.rawgit.com/hideya/jsutils/0.1/scrollIt.min.js"></script>
+    <script src="https://cdn.rawgit.com/hideya/jsutils/0.1/inobounce.min.js"></script>
+    <script src="./bundle.js" charset="utf-8"></script>
+  </head>
+  <body>
+    <div class="container">
+      <header id="header">
+        <h1 class="title">Doodle recognition with&nbsp;TensorFlow.js</h1>
+        <h2 class="subtitle">using CNN pretrained with&nbsp;SageMaker</h2>
+      </header>
+      <main>
+        <div id="input-column">
+          <canvas id="draw-area" width=280px; height=280px; class="is-disabled"></canvas>
+          <div class="button-container">
+            <a id="recognize-button" class="button is-rounded is-link is-loading is-disabled with-anim-workaround" onclick="recognize()">
+              Recognize
+            </a>
+            <a id="reset-button" class="button is-rounded" onclick="reset()">
+              Clear
+            </a>
+          </div>
+        </div>
+        <div id="output-column" class="is-hidden-mobile-alt">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Candidate</th>
+                <th>Probability</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="result-tbody">
+              <tr>
+                <th>apple</th>
+                <td>-</td>
+                <td><div></div></td>
+              </tr>
+              <tr>
+                <th>bed</th>
+                <td>-</td>
+                <td><div></div></td>
+              </tr>
+              <tr>
+                <th>cat</th>
+                <td>-</td>
+                <td><div></div></td>
+              </tr>
+              <tr>
+                <th>dog</th>
+                <td>-</td>
+                <td><div></div></td>
+              </tr>
+              <tr>
+                <th>eye</th>
+                <td>-</td>
+                <td><div></div></td>
+              </tr>
+              <tr>
+                <th>fish</th>
+                <td>-</td>
+                <td><div></div></td>
+              </tr>
+              <tr>
+                <th>grass</th>
+                <td>-</td>
+                <td><div></div></td>
+              </tr>
+              <tr>
+                <th>hand</th>
+                <td>-</td>
+                <td><div></div></td>
+              </tr>
+              <tr>
+                <th>ice cream</th>
+                <td>-</td>
+                <td><div></div></td>
+              </tr>
+              <tr>
+                <th>jacket</th>
+                <td>-</td>
+                <td><div></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
