@@ -9,7 +9,8 @@
   "scripts": {
     "build": "webpack",
     "watch": "webpack --watch",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "clean": "rm -rf node_modules public/bundle.js"
   },
   "devDependencies": {
     "@tensorflow/tfjs-converter": "^0.2.1",

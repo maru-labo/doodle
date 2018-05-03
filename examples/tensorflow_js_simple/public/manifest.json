@@ -1,7 +1,7 @@
 {
   "name": "Doodle Recognition PWA",
   "short_name": "Doodle PWA",
-  "description": "Doodle recognition with TensorFlow.js",
+  "description": "Doodle Recognition with TensorFlow.js",
   "start_url": "./index.html",
   "orientation": "portrait",
   "background_color": "white",

@@ -1,101 +1,102 @@
 <!DOCTYPE html>
-<!-- ref: https://github.com/yukagil/tfjs-mnist-cnn-demo/ -->
-<html lang="ja">
+<html>
   <head>
     <meta charset="utf-8">
     <title>Doodle Recognition with TensorFlow.js</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="./manifest.json">
     <link rel="icon" type="image/png" href="./marulabo-icon.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.0/css/bulma.min.css">
-    <link rel="stylesheet" href="./main.css">
+    <style>
+      main {margin: 20px; text-align: center; font-family: sans-serif;}
+      h1 {font-size: 22pt;}
+      .container {display: flex; flex-flow: row wrap; justify-content: center;}
+      #input-column {margin: 0 20px 20px 20px;}
+      button {font-size: 12pt; padding: 10px 30px 10px 30px; border-radius: 40px;}
+      #recognize-button {color: white; background: blue;}
+      table {margin: 0 20px 20px 20px; border-spacing: 0; text-align: left;}
+      th {width: 96px; padding: 2px; border-bottom: 2px solid lightgray;}
+      th:nth-child(3) {width: 76px;}
+      td {padding: 2px; border-bottom: 1px solid lightgray;}
+      td:nth-child(3) > div {background-color: red;}
+      .highlight {background-color: lightyellow;}
+      .blinking {animation: blinker 1s infinite;}
+      @keyframes blinker {0% {opacity: 0.5;} 100% {opacity: 1;}}
+    </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js"></script>
-    <script src="https://cdn.rawgit.com/hideya/jsutils/0.1/scientificToDecimal.min.js"></script>
-    <script src="https://cdn.rawgit.com/hideya/jsutils/0.1/scrollIt.min.js"></script>
-    <script src="https://cdn.rawgit.com/hideya/jsutils/0.1/inobounce.min.js"></script>
     <script src="./bundle.js" charset="utf-8"></script>
   </head>
   <body>
-    <div class="container">
-      <header id="header">
-        <h1 class="title">Doodle recognition with&nbsp;TensorFlow.js</h1>
-        <h2 class="subtitle">using CNN pretrained with&nbsp;SageMaker</h2>
-      </header>
-      <main>
+    <main>
+      <h1>Doodle Recognition with&nbsp;TensorFlow.js</h1>
+      <div class="container">
         <div id="input-column">
           <canvas id="draw-area" width=280px; height=280px; class="is-disabled"></canvas>
-          <div class="button-container">
-            <a id="recognize-button" class="button is-rounded is-link is-loading is-disabled with-anim-workaround" onclick="recognize()">
-              Recognize
-            </a>
-            <a id="reset-button" class="button is-rounded" onclick="reset()">
-              Clear
-            </a>
+          <div>
+            <button id="recognize-button" class="blinking" onclick="recognize()">Loading...</button>
+            <button onclick="reset()">Clear</button>
           </div>
         </div>
-        <div id="output-column" class="is-hidden-mobile-alt">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Candidate</th>
-                <th>Probability</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="result-tbody">
-              <tr>
-                <th>apple</th>
-                <td>-</td>
-                <td><div></div></td>
-              </tr>
-              <tr>
-                <th>bed</th>
-                <td>-</td>
-                <td><div></div></td>
-              </tr>
-              <tr>
-                <th>cat</th>
-                <td>-</td>
-                <td><div></div></td>
-              </tr>
-              <tr>
-                <th>dog</th>
-                <td>-</td>
-                <td><div></div></td>
-              </tr>
-              <tr>
-                <th>eye</th>
-                <td>-</td>
-                <td><div></div></td>
-              </tr>
-              <tr>
-                <th>fish</th>
-                <td>-</td>
-                <td><div></div></td>
-              </tr>
-              <tr>
-                <th>grass</th>
-                <td>-</td>
-                <td><div></div></td>
-              </tr>
-              <tr>
-                <th>hand</th>
-                <td>-</td>
-                <td><div></div></td>
-              </tr>
-              <tr>
-                <th>ice cream</th>
-                <td>-</td>
-                <td><div></div></td>
-              </tr>
-              <tr>
-                <th>jacket</th>
-                <td>-</td>
-                <td><div></div></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Candidate</th>
+              <th>Probability</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="result-tbody">
+            <tr>
+              <td>apple</td>
+              <td>-</td>
+              <td><div></div></td>
+            </tr>
+            <tr>
+              <td>bed</td>
+              <td>-</td>
+              <td><div></div></td>
+            </tr>
+            <tr>
+              <td>cat</td>
+              <td>-</td>
+              <td><div></div></td>
+            </tr>
+            <tr>
+              <td>dog</td>
+              <td>-</td>
+              <td><div></div></td>
+            </tr>
+            <tr>
+              <td>eye</td>
+              <td>-</td>
+              <td><div></div></td>
+            </tr>
+            <tr>
+              <td>fish</td>
+              <td>-</td>
+              <td><div></div></td>
+            </tr>
+            <tr>
+              <td>grass</td>
+              <td>-</td>
+              <td><div></div></td>
+            </tr>
+            <tr>
+              <td>hand</td>
+              <td>-</td>
+              <td><div></div></td>
+            </tr>
+            <tr>
+              <td>ice cream</td>
+              <td>-</td>
+              <td><div></div></td>
+            </tr>
+            <tr>
+              <td>jacket</td>
+              <td>-</td>
+              <td><div></div></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </main>
   </body>
