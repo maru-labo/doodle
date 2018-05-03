@@ -6,7 +6,6 @@
 const CACHE_NAME = 'main-rev-1';
 const URLS_TO_CACHE = [
   './index.html',
-  './main.css',
   './bundle.js',
   './saved_model_js/tensorflowjs_model.pb',
   './saved_model_js/weights_manifest.json',
@@ -14,11 +13,7 @@ const URLS_TO_CACHE = [
   './saved_model_js/group1-shard2of4',
   './saved_model_js/group1-shard3of4',
   './saved_model_js/group1-shard4of4',
-  'https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.0/css/bulma.min.css',
-  'https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js',
-  'https://cdn.rawgit.com/hideya/jsutils/0.1/scientificToDecimal.min.js',
-  'https://cdn.rawgit.com/hideya/jsutils/0.1/scrollIt.min.js',
-  'https://cdn.rawgit.com/hideya/jsutils/0.1/inobounce.min.js'
+  'https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js'
 ];
 
 self.addEventListener('install', event => {
