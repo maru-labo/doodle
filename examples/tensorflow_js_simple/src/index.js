@@ -2,15 +2,12 @@
 
 import * as tf from '@tensorflow/tfjs-core';
 import {loadFrozenModel} from '@tensorflow/tfjs-converter';
+import 'babel-polyfill';
 
 const MODEL_FILENAME = 'saved_model_js/tensorflowjs_model.pb';
 const WEIGHTS_FILENAME = 'saved_model_js/weights_manifest.json';
 
-let model;
-let doodlePad;
-let resultTable;
-
-window.onload = () => {
+document.addEventListener('DOMContentLoaded', async () => {
   // prepare URLs for the saved model files converted for TF.js
   const href = window.location.href;
   const pathPrefix = href.substring(0, href.lastIndexOf('/') + 1);
@@ -20,42 +17,56 @@ window.onload = () => {
   console.log('Weights URL:', weightsUrl);
 
   // load the pre-trained model
-  loadFrozenModel(modelUrl, weightsUrl).then(loadedModel => {
-    console.log('Loaded model:', loadedModel);
-    model = loadedModel;
+  const model = await loadFrozenModel(modelUrl, weightsUrl);
+  console.log('Loaded model:', model);
 
-    blockUntilTFReady(); // workaround for mobile safari
-    const recognizeButton = document.getElementById('recognize-button');
-    recognizeButton.classList.remove('blinking');
-    recognizeButton.innerHTML = 'Recognize';
+  blockUntilTFReady(); // workaround for mobile safari
+  // make the UI ready for recognition
+  const recognizeButton = document.getElementById('recognize-button');
+  recognizeButton.classList.remove('blinking');
+  recognizeButton.innerHTML = 'Recognize';
+
+  const doodlePad = new DoodlePad('draw-area');
+  const resultTable = new ResultTable('result-tbody');
+
+  recognizeButton.addEventListener('click', () => {
+    const inputImage = doodlePad.getImageData(28, 28);
+
+    tf.tidy(() => {
+      // convert to a tensor (shape: [width, height, channels])
+      const grayscaled = tf.fromPixels(inputImage, 1/* grayscale */).toFloat();
+      // normalize
+      const normalized = tf.div(grayscaled, tf.scalar(255));
+      // reshape the format (shape: [batch_size, width, height, channels])
+      const input = normalized.expandDims(0);
+
+      // perform recognition
+      const results = model.execute({image_1: input});
+      const scores = results.dataSync();
+
+      resultTable.update(scores);
+    });
   });
 
-  doodlePad = new DoodlePad('draw-area');
-  resultTable = new ResultTable('result-tbody');
-}
+  document.getElementById('clear-button').addEventListener('click', () => {
+    doodlePad.clear();
+    resultTable.clear();
+  });
 
-window.recognize = () => {
-  const inputImage = doodlePad.getImageData(28, 28);
-
-  // convert to a tensor (shape: [width, height, channels])
-  const grayscaled = tf.fromPixels(inputImage, 1/* grayscale */).toFloat();
-  // normalize
-  const normalized = tf.div(grayscaled, tf.scalar(255));
-  // reshape the format (shape: [batch_size, width, height, channels])
-  const input = normalized.expandDims(0);
-
-  // perform recognition
-  const results = model.execute({image_1: input});
-  const scores = results.dataSync();
-  results.dispose();
-
-  resultTable.update(scores);
-}
-
-window.reset = () => {
-  doodlePad.clear();
-  resultTable.clear();
-}
+  // Workaround for mobile Safari (iOS 11.3 ＋ tfjs-core 0.9.0)
+  // Even after loadFrozenModel()'s completion, model.execute() results in
+  // '[Error] WebGL: INVALID_ENUM: readPixels: invalid type'
+  // and blocks execution there for a while (and then resumes execution).
+  // Instead of blocking UI at the first doodle trial, the following function
+  // is invoked while initialization so that the UI keep showing loading status
+  // until the system really becomes ready for accepting input.
+  function blockUntilTFReady() {
+    let input = tf.zeros([1, 28, 28, 1]);
+    const results = model.execute({image_1: input});
+    const predictions = results.dataSync();
+    results.dispose();
+  }
+});
 
 class DoodlePad extends SignaturePad {
   constructor(canvasId) {
@@ -88,8 +99,6 @@ class ResultTable {
       tr.children[2].firstChild.innerHTML = '&nbsp;'; // need something to get displayed
       if (i === maxIndex) {
         tr.classList.add('highlight');
-      } else {
-        tr.classList.remove('highlight');
       }
     }
   }
@@ -101,20 +110,6 @@ class ResultTable {
       tr.children[2].firstChild.style = 'width: 0%';
     }
   }
-}
-
-// Workaround for mobile Safari (iOS 11.3 ＋ tfjs-core 0.9.0)
-// Even after loadFrozenModel()'s completion, model.execute() results in
-// '[Error] WebGL: INVALID_ENUM: readPixels: invalid type'
-// and blocks execution there for a while (and then resumes execution).
-// Instead of blocking UI at the first doodle trial, the following function
-// is invoked while initialization so that the loading spinner keep spinning
-// until the system really becomes ready for accepting input.
-function blockUntilTFReady() {
-  let input = tf.zeros([1, 28, 28, 1]);
-  const results = model.execute({image_1: input});
-  const predictions = results.dataSync();
-  results.dispose();
 }
 
 if ('serviceWorker' in navigator) {
