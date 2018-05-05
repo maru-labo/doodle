@@ -31,28 +31,25 @@
       labels: {
         required: true,
       },
-      predictions: {
+      classes: {
+        required: true,
+      },
+      probabilities: {
         required: true,
       },
     },
     computed: {
       result() {
-        if(!this.predictions) {
+        if(!this.probabilities) {
           return {label: '-', prob: 0}
         } else {
-          const index = this.argmax(this.predictions)
           return {
-            label: this.labels[index],
-            prob: this.predictions[index],
+            label: this.labels[this.classes],
+            prob: this.probabilities[this.classes],
           }
         }
       }
     },
-    methods: {
-      argmax(arr) {
-        return arr.map((x, i) => [x, i]).reduce((r, a) => (a[0] > r[0] ? a : r))[1]
-      }
-    }
   }
 </script>
 

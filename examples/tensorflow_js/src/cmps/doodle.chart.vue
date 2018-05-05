@@ -19,7 +19,7 @@
       labels: {
         required: true,
       },
-      predictions: {
+      probabilities: {
         required: true,
       },
     },
@@ -27,8 +27,8 @@
       chart: null,
     }),
     watch: {
-      predictions(){
-        const data = !this.predictions ? [] : this.predictions
+      probabilities(){
+        const data = !this.probabilities ? [] : this.probabilities
         this.chart.data.datasets[0].data = data
         this.chart.update()
       },
@@ -41,7 +41,7 @@
           labels: this.labels,
           datasets: [{
             label: 'Probabilities',
-            data: this.predictions,
+            data: this.probabilities,
           }]
         },
         options: {
