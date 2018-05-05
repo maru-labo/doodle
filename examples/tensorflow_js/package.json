@@ -6,9 +6,11 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "build": "parcel build src/index.pug",
-    "watch": "parcel watch src/index.pug",
-    "serve": "parcel src/index.pug"
+    "clean": "rm -rf dist",
+    "copy:assets": "mkdir -p dist && cp -a assets/*",
+    "build": "yarn clean && yarn copy:assets dist && parcel build src/index.pug -d dist --no-source-maps",
+    "watch": "parcel watch src/index.pug -d tmp",
+    "serve": "yarn copy:assets tmp && parcel src/index.pug -d tmp"
   },
   "devDependencies": {
     "@tensorflow/tfjs-converter": "^0.2.1",
