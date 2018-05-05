@@ -1,4 +1,3 @@
-'use strict';
 
 // ref: https://developers.google.com/web/ilt/pwa/caching-files-with-service-worker
 // ref: https://qiita.com/y_fujieda/items/f9e765ac9d89ba241154

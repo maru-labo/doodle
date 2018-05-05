@@ -1,8 +1,6 @@
-'use strict';
 
 import * as tf from '@tensorflow/tfjs-core';
 import {loadFrozenModel} from '@tensorflow/tfjs-converter';
-import 'babel-polyfill';
 
 const MODEL_FILENAME = 'saved_model_js/tensorflowjs_model.pb';
 const WEIGHTS_FILENAME = 'saved_model_js/weights_manifest.json';

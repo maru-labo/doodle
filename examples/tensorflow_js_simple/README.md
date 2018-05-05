@@ -2,7 +2,7 @@
 # Doodle Recognition PWA with TensorFlow.js
 
 This is an example [PWA](https://en.wikipedia.org/wiki/Progressive_Web_Apps)
-that uses [TensorFlow.js](https://js.tensorflow.org/) and performs Doodle recognition.
+that uses [TensorFlow.js](https://js.tensorflow.org/) and performs doodle recognition.
 
 It loads a pre-trained CNN model that was pre-converted to TensorFlow.js format
 by [tfjs-converter](https://github.com/tensorflow/tfjs-converter).
@@ -14,9 +14,9 @@ takes a long time until getting ready, but work OK once started).
 
 You can try it out at: https://doodle-simple-test.netlify.com/
 
-![Screenshot](https://i.imgur.com/LmuEWxN.jpg)
+![Screenshot](https://i.imgur.com/6cqPStY.png)
 
-### How to Try Out
+### Building and Running
 
 The following commands will start a web server on `localhost:8080`
 and open a browser page with the demo.
