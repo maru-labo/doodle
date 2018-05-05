@@ -20,8 +20,9 @@
     async created() {
       try {
         const res = await fetch('config.json')
-        if(res.status == 404) {
-          this.message = 'ERROR: Not found "config.json"'
+        if(!res.ok) {
+          const mes = await err.text()
+          this.message = `Error: ${mes}`
           return
         }
         this.config = await res.json()
