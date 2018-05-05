@@ -13,8 +13,8 @@
         .tags.is-centered
           span.tag.is-info.is-medium(v-for='label in labels') {{label}}
         doodle-canvas(@clear='clear' @recognize='recognize')
-        doodle-message(:labels='labels' :predictions='predictions')
-        doodle-chart(:labels='labels' :predictions='predictions')
+        doodle-message(:labels='labels' :probabilities='probabilities' :classes='classes')
+        doodle-chart(:labels='labels' :probabilities='probabilities')
     footer.footer
       img(src='../img/marulabo.svg' width=96 height=96)
       p © 2018 MaruLabo All rights reserved.
@@ -46,7 +46,8 @@
       },
     },
     data: () => ({
-      predictions: null,
+      probabilities: null,
+      classes: null,
     }),
     async created() {
       console.log('Loading model from ', this.modelUrl, this.weightsUrl)
@@ -60,7 +61,14 @@
     },
     methods: {
       clear() {
-        this.predictions = null
+        this.probabilities = null
+        this.classes = null
+      },
+      read_tensor(dict, key) {
+        const tensor = dict[key]
+        const value = tensor.dataSync()
+        tensor.dispose()
+        return Array.from(value)
       },
       recognize(imageData) {
         const img = tf.fromPixels(imageData, 1).toFloat()
@@ -69,9 +77,8 @@
         const results = this._model.execute({
           'image_1': grayscaled.expandDims(0)
         })
-        const predictions = results.dataSync()
-        results.dispose()
-        this.predictions = Object.values(predictions)
+        this.probabilities = this.read_tensor(results, 'model/probabilities')
+        this.classes = this.read_tensor(results, 'model/classes')
       }
     },
     components: {
