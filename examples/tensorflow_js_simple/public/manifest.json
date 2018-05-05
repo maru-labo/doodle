@@ -1,0 +1,15 @@
+{
+  "name": "Doodle Recognition PWA",
+  "short_name": "Doodle PWA",
+  "description": "Doodle Recognition with TensorFlow.js",
+  "start_url": "./index.html",
+  "orientation": "portrait",
+  "background_color": "white",
+  "theme_color": "white",
+  "display": "standalone",
+  "icons": [{
+    "src": "./marulabo-icon.png",
+    "sizes": "96x96",
+    "type": "image/png"
+  }]
+}
