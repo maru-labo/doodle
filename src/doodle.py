@@ -92,7 +92,9 @@ def model_fn(features, labels, mode, params):
         x = tf.layers.max_pooling2d(x, 2, 2, padding='SAME')
         x = tf.layers.conv2d(x, 64, 5, padding='SAME', activation=tf.nn.relu)
         x = tf.layers.max_pooling2d(x, 2, 2, padding='SAME')
-        x = tf.layers.flatten(x)
+        #x = tf.layers.flatten(x)
+        #XXX: `tf.layers.flatten` contains unsupported op `StridedSlice` by TensorFlow.js. Use `tf.reshape` as bellow.
+        x = tf.reshape(x, [-1, 7*7*64])
         x = tf.layers.dense(x, 1024, activation=tf.nn.relu)
         x = tf.layers.dropout(x, rate=dropout_rate, training=is_training)
         x = tf.layers.dense(x, 10)
