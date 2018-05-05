@@ -1,0 +1,9 @@
+{
+  "modelUrl": "model/tensorflowjs_model.pb",
+  "weightsUrl": "model/weights_manifest.json",
+  "labels": [
+    "apple","bed","cat","dog","eye",
+    "fish","grass","hand","ice creame","jacket"
+  ]
+}
+
