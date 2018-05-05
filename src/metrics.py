@@ -50,6 +50,12 @@ Accuracyではどちらで間違えているのかがわかりません。
 import six
 import tensorflow as tf
 
+def merge(xs):
+    y = dict()
+    for x in xs:
+        y.update(x)
+    return y
+
 def calculate(labels, classes, num_classes, add_summary=True):
     cm = tf.confusion_matrix(labels, classes, num_classes=num_classes, dtype=tf.float32)
     ln = tf.reduce_sum(cm)
@@ -58,10 +64,10 @@ def calculate(labels, classes, num_classes, add_summary=True):
     fn = tf.reduce_sum(cm, axis=0) - tp
     tn = ln - tp - fp - fn
     eps = tf.convert_to_tensor(1e-7)
-    metric_ops = {
-        **micro_metrics(tp, fp, tn, fn, eps),
-        **macro_metrics(tp, fp, tn, fn, num_classes, eps),
-    }
+    metric_ops = merge([
+        micro_metrics(tp, fp, tn, fn, eps),
+        macro_metrics(tp, fp, tn, fn, num_classes, eps),
+    ])
 
     if add_summary:
         for name, metric in six.iteritems(metric_ops):
@@ -109,12 +115,14 @@ def macro_metrics(tp, fp, tn, fn, num_classes, eps):
     for i in range(num_classes):
         family = 'macro_class_{}'.format(i)
         with tf.name_scope(family):
-            metrics = {
-                **metrics,
-                family+'/accuracy' : tf.metrics.mean_tensor(accuracies[i]),
-                family+'/precision': tf.metrics.mean_tensor(precisions[i]),
-                family+'/recall'   : tf.metrics.mean_tensor(recalls[i]),
-                family+'/f_measure': tf.metrics.mean_tensor(f_measures[i]),
-            }
+            metrics = merge([
+                metrics,
+                {
+                    family+'/accuracy' : tf.metrics.mean_tensor(accuracies[i]),
+                    family+'/precision': tf.metrics.mean_tensor(precisions[i]),
+                    family+'/recall'   : tf.metrics.mean_tensor(recalls[i]),
+                    family+'/f_measure': tf.metrics.mean_tensor(f_measures[i]),
+                },
+            ])
 
     return metrics
