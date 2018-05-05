@@ -8,9 +8,9 @@
   "scripts": {
     "clean": "rm -rf dist",
     "copy:assets": "mkdir -p dist && cp -a assets/*",
-    "build": "yarn clean && yarn copy:assets dist && parcel build src/index.pug -d dist --no-source-maps",
-    "watch": "parcel watch src/index.pug -d tmp",
-    "serve": "yarn copy:assets tmp && parcel src/index.pug -d tmp"
+    "build": "yarn clean && yarn copy:assets dist && parcel build src/index.js -d dist --no-source-maps",
+    "watch": "parcel watch src/index.js -d tmp",
+    "serve": "yarn copy:assets tmp && parcel src/index.js -d tmp"
   },
   "devDependencies": {
     "@tensorflow/tfjs-converter": "^0.2.1",
@@ -30,8 +30,7 @@
     "vue-template-compiler": "^2.5.16"
   },
   "dependencies": {
-    "buefy": "^0.6.5",
     "chart.js": "^2.7.2",
-    "vue": "^2.5.16"
+    "vue": "^2.5.13"
   }
 }

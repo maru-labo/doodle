@@ -2,10 +2,6 @@
 
 import 'babel-polyfill'
 import Vue from 'vue'
-import Buefy from 'buefy'
-
-Vue.use(Buefy)
-
 import Index from './index.vue'
 
 window.onload = () => {
