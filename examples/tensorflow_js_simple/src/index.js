@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // make the UI ready for recognition
   const recognizeButton = document.getElementById('recognize-button');
   recognizeButton.classList.remove('blinking');
-  recognizeButton.innerHTML = 'Recognize';
+  recognizeButton.innerText = 'Recognize';
 
   const doodlePad = new DoodlePad('draw-area');
   const resultTable = new ResultTable('result-tbody');
@@ -59,10 +59,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // is invoked while initialization so that the UI keep showing loading status
   // until the system really becomes ready for accepting input.
   function blockUntilTFReady() {
-    let input = tf.zeros([1, 28, 28, 1]);
-    const results = model.execute({image_1: input});
-    const predictions = results.dataSync();
-    results.dispose();
+    tf.tidy(() => model.execute({image_1: tf.zeros([1, 28, 28, 1])}));
   }
 });
 
