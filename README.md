@@ -1,5 +1,3 @@
-This repository is under experimental development.
-
 # Doodle Image Recognition by MaruLabo
 
 It is a classification model of doodle image. Classify from 28 pixel square grayscale images.
