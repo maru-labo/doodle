@@ -1,6 +1,8 @@
 node_modules/
 public/
 dist/
+tmp/
+assets/model/
 .cache/
 
 *.swp
