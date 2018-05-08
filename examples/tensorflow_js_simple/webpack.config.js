@@ -16,8 +16,10 @@ module.exports = {
   },
   devServer: {
     contentBase: path.join(__dirname, 'public'),
-    // enable access from a remote device
-    host: '0.0.0.0',
-    disableHostCheck: true
+    // Uncomment the following two lines to enable access from a remote device.
+    // Note that a Service Worker doesn't work when served remotely via http,
+    // as secure origins are required for its registration.
+    // host: '0.0.0.0',
+    // disableHostCheck: true
   }
 };
