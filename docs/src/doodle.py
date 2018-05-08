@@ -101,8 +101,8 @@ def model_fn(features, labels, mode, params):
 
     # 予測結果: クラスごとの離散確率分布、最も確率の高いクラスのインデクス
     predictions = {
-        'probabilities': tf.nn.softmax(logits),
-        'classes'      : tf.argmax(logits, axis=1),
+        'probabilities': tf.nn.softmax(logits, name='probabilities'),
+        'classes'      : tf.argmax(logits, axis=1, name='classes'),
     }
 
     #=========================================================
@@ -117,7 +117,8 @@ def model_fn(features, labels, mode, params):
         return tf.estimator.EstimatorSpec(mode=mode,
             predictions=predictions,
             export_outputs={
-                'predictions': tf.estimator.export.PredictOutput(predictions),
+                tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY:
+                    tf.estimator.export.PredictOutput(predictions),
             })
 
     #=========================================================
