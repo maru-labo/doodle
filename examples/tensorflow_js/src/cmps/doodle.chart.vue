@@ -14,6 +14,7 @@
 
 <script>
   import Chart from 'chart.js'
+  import options from './chart.options.yml'
   export default {
     props: {
       labels: {
@@ -44,24 +45,7 @@
             data: this.probabilities,
           }]
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            xAxes: [{
-              ticks: {
-                autoSkip: false
-              }
-            }],
-            yAxes: [{
-              ticks: {
-                max: 1,
-                min: 0,
-                stepSize: 0.1,
-              }
-            }]
-          }
-        }
+        options,
       })
     },
   }
