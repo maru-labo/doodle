@@ -72,8 +72,8 @@
           const results = this._model.execute({
             'image_1': grayscaled.expandDims(0)
           })
-          this.probabilities = Array.from(results['model/probabilities'].dataSync())
-          this.classes = Array.from(results['model/classes'].dataSync())
+          this.probabilities = Array.from(results['probabilities'].dataSync())
+          this.classes = Array.from(results['classes'].dataSync())
         })
       }
     },
