@@ -10,7 +10,8 @@
     "copy:assets": "mkdir -p dist && cp -a assets/*",
     "build": "yarn clean && yarn copy:assets dist && parcel build src/index.js -d dist --no-source-maps",
     "watch": "parcel watch src/index.js -d tmp",
-    "serve": "yarn copy:assets tmp && parcel src/index.js -d tmp"
+    "serve": "yarn copy:assets tmp && parcel src/index.js -d tmp",
+    "zip": "pushd dist && tar cvzf ../tensorflowjs.doodle.marulabo.tar.gz * && popd"
   },
   "devDependencies": {
     "@tensorflow/tfjs-converter": "^0.2.1",
