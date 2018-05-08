@@ -64,21 +64,17 @@
         this.probabilities = null
         this.classes = null
       },
-      read_tensor(dict, key) {
-        const tensor = dict[key]
-        const value = tensor.dataSync()
-        tensor.dispose()
-        return Array.from(value)
-      },
       recognize(imageData) {
-        const img = tf.fromPixels(imageData, 1).toFloat()
-        const v255 = tf.scalar(255.)
-        const grayscaled = tf.div(tf.sub(v255, img), v255)
-        const results = this._model.execute({
-          'image_1': grayscaled.expandDims(0)
+        tf.tidy(() => {
+          const img = tf.fromPixels(imageData, 1).toFloat()
+          const v255 = tf.scalar(255.)
+          const grayscaled = tf.div(tf.sub(v255, img), v255)
+          const results = this._model.execute({
+            'image_1': grayscaled.expandDims(0)
+          })
+          this.probabilities = Array.from(results['model/probabilities'].dataSync())
+          this.classes = Array.from(results['model/classes'].dataSync())
         })
-        this.probabilities = this.read_tensor(results, 'model/probabilities')
-        this.classes = this.read_tensor(results, 'model/classes')
       }
     },
     components: {
