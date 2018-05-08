@@ -27,6 +27,15 @@ yarn  # Installs dependencies.
 yarn start  # Starts a web server and opens a page. Also watches for changes.
 ```
 
-To enable the PWA aspects (e.g. offline operations),
-the contents of `public` directory (after `$ yarn build`)
-needs to be served via **https**.
+After `$ yarn build`, the contents of `public` directory holds deployable files.
+Note that those files need to be served via **https** to enable PWA features
+(unless they are served from `localhost`).
+
+### Notes on Debugging
+
+This is a PWA, so the involved files will be cached
+(it is different from the browser cache; it is Service Worker controlled cache).
+Attention is required to make sure that each debug execution respects
+the latest file changes. Please reference the document
+["Debugging Service Workers"](https://developers.google.com/web/fundamentals/codelabs/debugging-service-workers/)
+for details including the other aspects of debugging PWA and Service Workers.
