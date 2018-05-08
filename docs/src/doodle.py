@@ -99,11 +99,11 @@ def model_fn(features, labels, mode, params):
         logits = x
         assert logits.get_shape().as_list() == [None, num_classes]
 
-        # 予測結果: クラスごとの離散確率分布、最も確率の高いクラスのインデクス
-        predictions = {
-            'probabilities': tf.nn.softmax(logits, name='probabilities'),
-            'classes'      : tf.argmax(logits, axis=1, name='classes'),
-        }
+    # 予測結果: クラスごとの離散確率分布、最も確率の高いクラスのインデクス
+    predictions = {
+        'probabilities': tf.nn.softmax(logits),
+        'classes'      : tf.argmax(logits, axis=1),
+    }
 
     #=========================================================
     # 推論モードならモデルの出力を返します
@@ -127,10 +127,10 @@ def model_fn(features, labels, mode, params):
         # クロスエントロピーを計算して誤差に追加します
         cross_entropy_loss = tf.losses.sparse_softmax_cross_entropy(
             labels=labels, logits=logits)
-        
+
         # モデルで追加された全ての誤差の総和を取得します
         total_loss = tf.losses.get_total_loss()
-    
+
     #=========================================================
     # 正答率など、モデルの評価値を計算します
     #=========================================================
@@ -141,7 +141,7 @@ def model_fn(features, labels, mode, params):
     #=========================================================
     global_step = tf.train.get_or_create_global_step()
     update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
-    
+
     with tf.variable_scope('optimizer'), tf.control_dependencies(update_ops):
         # total_loss(誤差の総和)が小さくなるように変数を更新します
         optimizer = tf.train.AdamOptimizer(learning_rate)
@@ -164,3 +164,4 @@ def model_fn(features, labels, mode, params):
         loss=total_loss,
         train_op=fit,
         eval_metric_ops=metric_ops)
+
