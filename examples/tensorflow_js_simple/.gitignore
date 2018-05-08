@@ -1,0 +1,10 @@
+node_modules/
+public/bundle.js
+
+.cache/
+
+*.swp
+*.tar
+*.gz
+*.zip
+*.log
