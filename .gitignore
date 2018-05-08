@@ -1,5 +1,6 @@
 __pycache__/
 .ipynb_checkpoints/
+
 .DS_Store
 *.swp
 *.pyc
@@ -10,4 +11,6 @@ __pycache__/
 data/
 raw_data/
 logs/
+export/
+model/
 
