@@ -104,7 +104,7 @@ def macro_metrics(tp, fp, tn, fn, num_classes, eps):
         precision = tf.reduce_mean(precisions)
         recall    = tf.reduce_mean(recalls)
         f_measure = tf.reduce_mean(f_measures)
-        
+
         metrics = {
             'macro_average/accuracy' : tf.metrics.mean_tensor(accuracy),
             'macro_average/precision': tf.metrics.mean_tensor(precision),
