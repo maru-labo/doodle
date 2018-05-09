@@ -12,7 +12,7 @@ It runs on reasonably new Chrome, Safari, Firefox, Mobile Safari and Android Chr
 (not on Edge nor IE. Safari and Mobile Safari have a start up issue;
 takes a long time until getting ready, but work OK once started).
 
-You can try it out at: https://doodle-simple-test.netlify.com/
+You can try it out at: https://tfjs-doodle-recognition-pwa.netlify.com/
 
 ![Screenshot](https://i.imgur.com/G6g18ap.png)
 
@@ -23,11 +23,11 @@ and open a browser page with the demo.
 
 ```bash
 cd tensorflow_js_simple
-yarn  # Installs dependencies.
+yarn        # Installs dependencies.
 yarn start  # Starts a web server and opens a page. Also watches for changes.
 ```
 
-After `$ yarn build`, the contents of `public` directory holds deployable files.
+After `$ yarn build`, `public` directory holds the deployable files.
 Note that those files need to be served via **https** to enable PWA features
 (unless they are served from `localhost`).
 
@@ -43,8 +43,9 @@ for details including the other aspects of debugging PWA and Service Workers.
 ### Updating Pre-trained Model Data
 
 For the convenience, this example includes a pre-trained model files
-under `public/saved_model_js`.
-The following steps illustrates how to update those model files:
+under `public/saved_model_js` (the model is of
+[this .tar.gz file](https://github.com/maru-labo/doodle/releases/download/v1.0.0/model.tar.gz)).
+The following steps illustrate how to update those model files:
 
 1. Obtain saved model files of newly trained model.
 2. Find out model information, necessary for conversion to TensorFlow.js format
@@ -100,11 +101,12 @@ tensorflowjs_converter \
 # Step 5
 # Update INPUT_NODE_NAME and OUTPUT_NODE_NAME in src/index.js as needed.
 ```
-Note that, for simplicity, the example code deals with single output node.
-If you want to read output from more than one node, please reference
-[the other example](https://github.com/maru-labo/doodle/blob/62c71ba554f827d77e907f517e2d585165cfc58b/examples/tensorflow_js/src/cmps/doodle.vue#L72-L76)
-to see how to handle such cases.
+Note that, for simplicity's sake, the example code deals with single output node.
+This limitation has no drawback in this example
+as `probabilities` node holds all the information necessary for the demo.
+When you need to read output from more than one node, however, please reference
+[the other example](https://github.com/maru-labo/doodle/blob/62c71ba554f827d77e907f517e2d585165cfc58b/examples/tensorflow_js/src/cmps/doodle.vue#L72-L76).
 
 Another note -- as mentioned in ["Notes on Debugging"](#notes-on-debugging) above,
-attention needs to be paid to make sure the program is really reading
-the updated model files while trial executions after update.
+attention needs to be paid to make sure that the new files are really being used
+when running after an update.
