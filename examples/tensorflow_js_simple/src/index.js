@@ -5,6 +5,7 @@ import {loadFrozenModel} from '@tensorflow/tfjs-converter';
 const MODEL_FILENAME = 'saved_model_js/tensorflowjs_model.pb';
 const WEIGHTS_FILENAME = 'saved_model_js/weights_manifest.json';
 const INPUT_NODE_NAME = 'image_1';
+const OUTPUT_NODE_NAME = 'probabilities';
 
 document.addEventListener('DOMContentLoaded', async () => {
   // prepare URLs for the saved model files converted for TF.js
@@ -40,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const input = normalized.expandDims(0);
 
       // perform recognition
-      const output = model.execute({[INPUT_NODE_NAME]: input});
+      const output = model.execute({[INPUT_NODE_NAME]: input}, OUTPUT_NODE_NAME);
       const probabilities = output.dataSync();
 
       resultTable.update(probabilities);
