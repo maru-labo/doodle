@@ -7,11 +7,11 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
-    "watch": "webpack --watch",
-    "start": "webpack-dev-server --open",
-    "clean": "rm -rf public/bundle.js",
-    "clean-all": "rm -rf public/bundle.js node_modules"
+    "build": "./prepare_model && webpack",
+    "watch": "./prepare_model && webpack --watch",
+    "start": "./prepare_model && webpack-dev-server --open",
+    "clean": "\\rm -rf public/bundle.js",
+    "clean-all": "\\rm -rf public/bundle.js public/saved_model_js/ model_data/ node_modules/"
   },
   "dependencies": {
     "@tensorflow/tfjs-converter": "^0.2.1",

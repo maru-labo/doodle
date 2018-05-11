@@ -1,5 +1,7 @@
 node_modules/
 public/bundle.js
+public/saved_model_js/
+model_data/
 
 .cache/
 
