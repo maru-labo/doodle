@@ -16,8 +16,13 @@ module.exports = {
   },
   devServer: {
     contentBase: path.join(__dirname, 'public'),
-    // enable access from a remote device
-    host: '0.0.0.0',
-    disableHostCheck: true
+    // Uncomment the last three lines to enable access from a remote device.
+    // Note that https is enabled as a Service Workers require secure origins.
+    // The server uses a self-signed certificate by default, which will result
+    // in displaying security warnings in browser.
+    // See: https://webpack.js.org/configuration/dev-server/#devserver-https
+    // host: '0.0.0.0',
+    // disableHostCheck: true,
+    // https: true
   }
 };

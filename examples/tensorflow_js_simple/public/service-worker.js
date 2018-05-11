@@ -17,23 +17,25 @@ const URLS_TO_CACHE = [
 ];
 
 self.addEventListener('install', event => {
+  console.log('SW: Service Worker installed');
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      console.log('Adding to cache:', CACHE_NAME, 'files:', URLS_TO_CACHE);
+      console.log('SW: Adding to cache:', CACHE_NAME, 'files:', URLS_TO_CACHE);
       return cache.addAll(URLS_TO_CACHE);
     })
   );
 });
 
-// delete old cache if exists
 self.addEventListener('activate', event => {
+  console.log('SW: Service Worker became active');
+  // delete old cache if exists
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
           // delete the cache if its name (revision) is not the current one
           if (cacheName !== CACHE_NAME) {
-            console.log('Deleting cache:', cacheName);
+            console.log('SW: Deleting cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -50,11 +52,11 @@ self.addEventListener('fetch', event => {
     caches.open(CACHE_NAME).then(cache => {
       return cache.match(event.request).then(response => {
         if (response) {
-          console.log('Fetch: read from cache:', CACHE_NAME, 'file:', event.request.url);
+          console.log('SW: Fetch: read from cache:', CACHE_NAME, 'file:', event.request.url);
           return response;
         }
         fetch(event.request).then(netResponse => {
-          console.log('Fetch: read from the network:', event.request.url);
+          console.log('SW: Fetch: read from the network:', event.request.url);
           cache.put(event.request, netResponse.clone());
           return netResponse;
         });

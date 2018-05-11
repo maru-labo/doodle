@@ -4,6 +4,8 @@ import {loadFrozenModel} from '@tensorflow/tfjs-converter';
 
 const MODEL_FILENAME = 'saved_model_js/tensorflowjs_model.pb';
 const WEIGHTS_FILENAME = 'saved_model_js/weights_manifest.json';
+const INPUT_NODE_NAME = 'image_1';
+const OUTPUT_NODE_NAME = 'probabilities';
 
 document.addEventListener('DOMContentLoaded', async () => {
   // prepare URLs for the saved model files converted for TF.js
@@ -31,18 +33,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     const inputImage = doodlePad.getImageData(28, 28);
 
     tf.tidy(() => {
-      // convert to a tensor (shape: [width, height, channels])
-      const grayscaled = tf.fromPixels(inputImage, 1/* grayscale */).toFloat();
-      // normalize
-      const normalized = tf.div(grayscaled, tf.scalar(255));
+      // convert the image to a tensor (shape: [width, height, channels])
+      const grayscale = tf.fromPixels(inputImage, 1/* grayscale */).toFloat();
+      // normalize the values
+      const normalized = tf.div(grayscale, tf.scalar(255));
       // reshape the format (shape: [batch_size, width, height, channels])
       const input = normalized.expandDims(0);
 
       // perform recognition
-      const results = model.execute({image_1: input});
-      const scores = results.dataSync();
+      const output = model.execute({[INPUT_NODE_NAME]: input}, OUTPUT_NODE_NAME);
+      const probabilities = output.dataSync();
 
-      resultTable.update(scores);
+      resultTable.update(probabilities);
     });
   });
 
@@ -109,8 +111,8 @@ class ResultTable {
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./service-worker.js')
-    .then(success => console.log('Info: Service worker registered:', success))
-    .catch(error => console.error('Error: Service worker not registered:', error));
+    .then(success => console.log('Service Worker registered:', success))
+    .catch(error => console.error('Error: Failed to register Service Worker:', error));
 } else {
-  console.log('Warning: No support for Service Worker');
+  console.log('Warning: No support for Service Workers');
 }
