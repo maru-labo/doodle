@@ -8,6 +8,8 @@ It loads a pre-trained CNN model that was converted to TensorFlow.js format
 by [tfjs-converter](https://github.com/tensorflow/tfjs-converter).
 The training code is shared at [the root of this repo](../../../..).
 
+<img src="https://i.imgur.com/XOQIx5W.png" style="width: 100px; float: right;"/>
+
 It runs on reasonably new Chrome, Safari, Firefox, Mobile Safari and Android Chrome
 (not on Edge nor IE. Safari and Mobile Safari have a start up issue;
 takes a long time until getting ready, but work OK once started).
@@ -27,7 +29,7 @@ yarn        # Installs dependencies.
 yarn start  # Starts a web server and opens a page. Also watches for changes.
 ```
 
-After `$ yarn build`, `public` directory holds the deployable files.
+After `yarn build`, `public` directory holds the deployable files.
 Note that those files need to be served via **https** to enable PWA features
 (unless they are served from `localhost`).
 
@@ -43,7 +45,7 @@ for details including the other aspects of debugging PWA and Service Workers.
 ### Updating Pre-trained Model Data
 
 For the convenience, this example includes a pre-trained model files
-under `public/saved_model_js` (the model is of
+under `public/saved_model_js` (the original model is of
 [this .tar.gz file](https://github.com/maru-labo/doodle/releases/download/v1.0.0/model.tar.gz)).
 The following steps illustrate how to update those model files:
 
@@ -59,7 +61,7 @@ The following steps illustrate how to update those model files:
 [SavedModel CLI](https://www.tensorflow.org/versions/r1.2/programmers_guide/saved_model_cli)
 and
 [tfjs-converter](https://github.com/tensorflow/tfjs-converter)
-are need to be installed to move forward.
+need to be installed to move forward.
 
 ```bash
 # This is an example; update the command lines as needed.
