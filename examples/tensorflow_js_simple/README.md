@@ -8,15 +8,13 @@ It loads a pre-trained CNN model that was converted to TensorFlow.js format
 by [tfjs-converter](https://github.com/tensorflow/tfjs-converter).
 The training code is shared at [the root of this repo](../../../..).
 
-<img src="https://i.imgur.com/XOQIx5W.png" style="width: 100px; float: right;"/>
-
 It runs on reasonably new Chrome, Safari, Firefox, Mobile Safari and Android Chrome
 (not on Edge nor IE. Safari and Mobile Safari have a start up issue;
 takes a long time until getting ready, but work OK once started).
 
 You can try it out at: https://tfjs-doodle-recognition-pwa.netlify.com/
 
-![Screenshot](https://i.imgur.com/G6g18ap.png)
+![Screenshot](https://i.imgur.com/G6g18ap.png)![QR code](https://i.imgur.com/XOQIx5W.png)
 
 ### Building and Running
 
