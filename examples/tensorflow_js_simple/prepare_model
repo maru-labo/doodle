@@ -1,0 +1,36 @@
+#!/bin/bash
+
+modelDir=model_data
+publicModelDir=public/saved_model_js
+modelTgzUrl=https://github.com/maru-labo/doodle/releases/download/v1.0.0/model.tar.gz
+
+if [ -d $publicModelDir ]; then
+  echo Model directory \"$publicModelDir\" already exists.
+  echo Remove the directory if you want to reinstall the model.
+  exit 0;
+fi
+
+if ! which tensorflowjs_converter &> /dev/null; then
+  echo \"tensorflowjs_converter\" not installed.
+  echo Aborting...
+  exit 1;
+fi
+
+mkdir -p $modelDir
+cd $modelDir
+
+echo
+echo Obtaining model data from: $modelTgzUrl
+echo
+wget $modelTgzUrl
+tar -xzf model.tar.gz
+
+echo
+echo Converting the model data...
+echo
+tensorflowjs_converter \
+    --input_format=tf_saved_model \
+    --saved_model_tags='serve' \
+    --output_node_names='classes,probabilities' \
+    export/Servo/* \
+    ../$publicModelDir
