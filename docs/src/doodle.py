@@ -165,4 +165,3 @@ def model_fn(features, labels, mode, params):
         loss=total_loss,
         train_op=fit,
         eval_metric_ops=metric_ops)
-
