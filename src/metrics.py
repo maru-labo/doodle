@@ -56,18 +56,19 @@ def merge(xs):
         y.update(x)
     return y
 
-def calculate(labels, classes, num_classes, add_summary=True):
-    cm = tf.confusion_matrix(labels, classes, num_classes=num_classes, dtype=tf.float32)
-    ln = tf.reduce_sum(cm)
-    tp = tf.diag_part(cm)
-    fp = tf.reduce_sum(cm, axis=1) - tp
-    fn = tf.reduce_sum(cm, axis=0) - tp
-    tn = ln - tp - fp - fn
-    eps = tf.convert_to_tensor(1e-7)
-    metric_ops = merge([
-        micro_metrics(tp, fp, tn, fn, eps),
-        macro_metrics(tp, fp, tn, fn, num_classes, eps),
-    ])
+def calculate(labels, classes, num_classes, add_summary=True, scope=None):
+    with tf.variable_scope(scope, 'metrics', [labels, classes]):
+        cm = tf.confusion_matrix(labels, classes, num_classes=num_classes, dtype=tf.float32)
+        ln = tf.reduce_sum(cm)
+        tp = tf.diag_part(cm)
+        fp = tf.reduce_sum(cm, axis=1) - tp
+        fn = tf.reduce_sum(cm, axis=0) - tp
+        tn = ln - tp - fp - fn
+        eps = tf.convert_to_tensor(1e-7)
+        metric_ops = merge([
+            micro_metrics(tp, fp, tn, fn, eps),
+            macro_metrics(tp, fp, tn, fn, num_classes, eps),
+        ])
 
     if add_summary:
         for name, metric in six.iteritems(metric_ops):
