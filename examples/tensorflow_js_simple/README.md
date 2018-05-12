@@ -8,18 +8,24 @@ It loads a pre-trained CNN model that was converted to TensorFlow.js format
 by [tfjs-converter](https://github.com/tensorflow/tfjs-converter).
 The training code is shared at [the root of this repo](../../../..).
 
+<img src="https://i.imgur.com/XOQIx5W.png" width="100" align="right">
+
 It runs on reasonably new Chrome, Safari, Firefox, Mobile Safari and Android Chrome
 (not on Edge nor IE. Safari and Mobile Safari have a start up issue;
 takes a long time until getting ready, but work OK once started).
 
 You can try it out at: https://tfjs-doodle-recognition-pwa.netlify.com/
 
-![Screenshot](https://i.imgur.com/G6g18ap.png)![QR code](https://i.imgur.com/XOQIx5W.png)
+![Screenshot](https://i.imgur.com/G6g18ap.png)
 
 ### Building and Running
 
+[`tensorflowjs_converter`](https://github.com/tensorflow/tfjs-converter)
+needs to be installed.<br/>
 The following commands will start a web server on `localhost:8080`
 and open a browser page with the demo.
+The build process installs the pre-trained model of
+[Release v1.0.0](https://github.com/maru-labo/doodle/releases/tag/v1.0.0).
 
 ```bash
 cd tensorflow_js_simple
@@ -42,10 +48,8 @@ for details including the other aspects of debugging PWA and Service Workers.
 
 ### Updating Pre-trained Model Data
 
-For the convenience, this example includes a pre-trained model files
-under `public/saved_model_js` (the original model is of
-[this .tar.gz file](https://github.com/maru-labo/doodle/releases/download/v1.0.0/model.tar.gz)).
-The following steps illustrate how to update those model files:
+The following steps illustrate how to update the model files.
+You may wan to update `prepare_model` script for a new model.
 
 1. Obtain saved model files of newly trained model.
 2. Find out model information, necessary for conversion to TensorFlow.js format
