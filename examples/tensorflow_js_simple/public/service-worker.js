@@ -55,7 +55,7 @@ self.addEventListener('fetch', event => {
           console.log('SW: Fetch: read from cache:', CACHE_NAME, 'file:', event.request.url);
           return response;
         }
-        fetch(event.request).then(netResponse => {
+        return fetch(event.request).then(netResponse => {
           console.log('SW: Fetch: read from the network:', event.request.url);
           cache.put(event.request, netResponse.clone());
           return netResponse;
