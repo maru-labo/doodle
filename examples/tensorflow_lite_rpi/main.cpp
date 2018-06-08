@@ -61,7 +61,7 @@ cli_options parse_args(int argc, char const* argv[]) {
   return opt;
 }
 
-bool isError(TfLiteStatus const& status) {
+bool is_error(TfLiteStatus const& status) {
   return status != kTfLiteOk;
 }
 
@@ -89,7 +89,7 @@ int main(int argc, char const* argv[]) {
   std::unique_ptr<tflite::Interpreter> interpreter;
   tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter);
   status = interpreter->AllocateTensors();
-  if(isError(status)) {
+  if(is_error(status)) {
     std::cerr << "Failed to allocate tensor's memory." << std::endl;
     return -1;
   }
@@ -143,7 +143,7 @@ int main(int argc, char const* argv[]) {
 
   // Run inference. Invoke output tensor.
   status = interpreter->Invoke();
-  if(isError(status)) {
+  if(is_error(status)) {
     std::cerr << "Failed the invocation of inference." <<std::endl;
     return -1;
   }
