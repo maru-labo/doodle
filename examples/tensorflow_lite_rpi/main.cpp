@@ -127,10 +127,11 @@ int main(int argc, char const* argv[]) {
       for(int c = 0; c < IMAGE_CHANNEL; ++c) {
         auto i = h * IMAGE_WIDTH * IMAGE_CHANNEL + w * IMAGE_CHANNEL + c;
         auto pixel = static_cast<float>(data[i]);
+        assert(0.f <= pixel && pixel <= 255.f);
         image[i] = pixel / 255.f;
 
         // Show pixel for debug.
-        char const DEBUG_PIXEL[] = {' ', '+', '*'};
+        static char const DEBUG_PIXEL[] = {' ', '+', '*'};
         int v = static_cast<int>(pixel / 100);
         std::cout << DEBUG_PIXEL[v] << ' ';
       }
