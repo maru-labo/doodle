@@ -3,6 +3,10 @@
 
 ![](./screenshot.png)
 
+This has been tested on Raspberry Pi 3 Model B Rev 1.2,
+Raspbian GNU/Linux 9 (stretch),
+gcc version 6.3.0 20170516 (Raspbian 6.3.0-18+rpi1+deb9u1)
+
 ## How to use
 
 Predict data given from standard input or specified file data.
