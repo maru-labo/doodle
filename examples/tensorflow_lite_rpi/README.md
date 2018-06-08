@@ -10,6 +10,10 @@ Predict data given from standard input or specified file data.
 The input data is a grayscale image of 28x28 pixels.
 Each pixel is represented by 0 to 255. Therefore, it is binary data of 784 bytes.
 
+Positional Arguments:
+
+- `tflite_model_path`: Path to model data(`.tflite`).
+
 Optional Arguments:
 
 - `-f`: The binary data file path for input data.
