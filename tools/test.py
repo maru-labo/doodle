@@ -1,3 +1,4 @@
+# coding: utf-8
 # Copyright (c) 2018 一般社団法人 MaruLabo
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy

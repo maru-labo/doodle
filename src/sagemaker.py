@@ -19,9 +19,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-__all__ = [
-    'estimator',
-    'inputs',
-    'sagemaker',
-    'metrics',
-]
+import inputs
+import estimator
+
+def serving_input_fn():
+    return inputs.serving_input_fn()()
+
+def train_input_fn():
+    return inputs.train_input_fn()
+
+def eval_input_fn():
+    return inputs.eval_input_fn()
+
+def model_fn(features, labels, mode, params):
+    return estimator.model_fn(features, labels, mode, params)

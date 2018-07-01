@@ -1,3 +1,4 @@
+# coding: utf-8
 # Copyright (c) 2018 一般社団法人 MaruLabo
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -17,8 +18,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
-# coding: utf-8
 
 """
 モデルの評価指針となるメトリクスを計算するモジュールです。
@@ -69,12 +68,7 @@ Accuracyではどちらで間違えているのかがわかりません。
 
 import six
 import tensorflow as tf
-
-def merge(xs):
-    y = dict()
-    for x in xs:
-        y.update(x)
-    return y
+from util import merge
 
 def calculate(labels, classes, num_classes, add_summary=True, scope=None):
     with tf.variable_scope(scope, 'metrics', [labels, classes]):
