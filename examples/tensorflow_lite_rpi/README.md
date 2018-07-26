@@ -25,6 +25,12 @@ Optional Arguments:
 You can download the model data(`doodle.tflite`)
 from [here](https://github.com/maru-labo/doodle/releases/download/v1.0.0/doodle.tflite).
 
+If you use the example fish data(`./inputs.dat`):
+
+```
+$ ./doodle ./doodle.tflite -f ./inputs.dat
+```
+
 ## How to build
 
 You need to prepare `libtensorflow-lite.a`.
