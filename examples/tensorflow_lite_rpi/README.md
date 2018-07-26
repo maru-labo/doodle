@@ -22,6 +22,9 @@ Optional Arguments:
 
 - `-f`: The binary data file path for input data.
 
+You can download the model data(`doodle.tflite`)
+from [here](https://github.com/maru-labo/doodle/releases/download/v1.0.0/doodle.tflite).
+
 ## How to build
 
 You need to prepare `libtensorflow-lite.a`.
@@ -44,6 +47,6 @@ $ gcc-6 main.cpp \
 Convert SavedModel to TFLite Model:
 
 ```
-$ python convert.py <path/to/saved_model/dir>
+$ python convert.py <path/to/doodle/saved_model/dir>
 ```
 
