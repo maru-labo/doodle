@@ -9,10 +9,12 @@ gcc version 6.3.0 20170516 (Raspbian 6.3.0-18+rpi1+deb9u1)
 
 ## How to use
 
-Predict data given from standard input or specified file data.
+This application to classify 'doodle' data given from standard input or
+specified file.
 
-The input data is a grayscale image of 28x28 pixels.
-Each pixel is represented by 0 to 255. Therefore, it is binary data of 784 bytes.
+The input data is a grayscale image of 28x28 pixels. Each pixel is represented
+by 0 to 255. Therefore, it's binary data of 784 bytes.
+
 
 Positional Arguments:
 
@@ -36,7 +38,7 @@ $ ./doodle ./doodle.tflite -f ./inputs.dat
 You need to prepare `libtensorflow-lite.a`.
 Refer to [here](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/lite/g3doc/rpi.md).
 
-Native compile example:
+Example to native compile:
 
 ```
 $ cd ~
@@ -50,7 +52,7 @@ $ gcc-6 main.cpp \
 >   -lstdc++ -lpthread -ldl -lm
 ```
 
-Convert SavedModel to TFLite Model:
+Example converting from SavedModel to TFLite Model:
 
 ```
 $ python convert.py <path/to/doodle/saved_model/dir>
