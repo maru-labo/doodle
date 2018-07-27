@@ -83,7 +83,7 @@ int main(int argc, char const* argv[]) {
   float* probabilities = interpreter->typed_output_tensor<float>(0);
 
   char data[IMAGE_BYTES];
-  if(load_data(opt.input_file, data, IMAGE_BYTES) != 0) return -1;
+  if(!load_data(opt.input_file, data, IMAGE_BYTES)) return -1;
 
   // Fill input tensor.
   for(int h = 0; h < IMAGE_HEIGHT; ++h) {

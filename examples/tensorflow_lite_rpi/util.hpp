@@ -76,13 +76,13 @@ bool is_valid_model(std::unique_ptr<tflite::Interpreter> const& interpreter) {
   return true;
 }
 
-int load_data(std::string const& filename, char buf[], int size) {
+bool load_data(std::string const& filename, char buf[], int size) {
   if(filename.empty()) {
     // Load input data from stdin.
     std::cin.read(buf, size);
     if(std::cin.fail()) {
       std::cerr << "Failed to read input data from stdin." << std::endl;
-      return -1;
+      return false;
     }
   } else {
     // Load input data from file.
@@ -90,9 +90,10 @@ int load_data(std::string const& filename, char buf[], int size) {
     file.read(buf, size);
     if(file.fail()) {
       std::cerr << "Not found input file: " << filename << std::endl;
-      return -1;
+      return false;
     }
   }
+  return true;
 }
 
 struct cli_options {
