@@ -1,0 +1,55 @@
+workspace(name='doodle')
+
+# Android SDK/NDK
+android_sdk_repository(
+  name='androidsdk',
+  path='/Users/ornew/android',
+  #api_level = 28,
+  #build_tools_version = '26.1.1',
+)
+android_ndk_repository(
+  name='androidndk',
+  path='/Users/ornew/android/ndk-r16b',
+  api_level = 16, # The supported NDK versions with Bazel are currently 10 to 16.
+)
+
+# Google Maven
+GMAVEN_TAG = '20180723-2'
+http_archive(
+    name = 'gmaven_rules',
+    strip_prefix = 'gmaven_rules-%s' % GMAVEN_TAG,
+    url = 'https://github.com/bazelbuild/gmaven_rules/archive/%s.tar.gz' % GMAVEN_TAG,
+)
+load('@gmaven_rules//:gmaven.bzl', 'gmaven_rules')
+gmaven_rules()
+
+# Googlr Closure
+http_archive(
+  name = 'io_bazel_rules_closure',
+  sha256 = 'a38539c5b5c358548e75b44141b4ab637bba7c4dc02b46b1f62a96d6433f56ae',
+  strip_prefix = 'rules_closure-dbb96841cc0a5fb2664c37822803b06dab20c7d1',
+  urls = [
+    'https://mirror.bazel.build/github.com/bazelbuild/rules_closure/archive/dbb96841cc0a5fb2664c37822803b06dab20c7d1.tar.gz',
+    'https://github.com/bazelbuild/rules_closure/archive/dbb96841cc0a5fb2664c37822803b06dab20c7d1.tar.gz',  # 2018-04-13
+  ],
+)
+load('@io_bazel_rules_closure//closure:defs.bzl', 'closure_repositories')
+closure_repositories()
+
+# TensorFlow
+git_repository(
+  name = 'org_tensorflow',
+  remote = 'https://github.com/tensorflow/tensorflow.git',
+  init_submodules = 1,
+  tag = 'v1.9.0',
+)
+load('@org_tensorflow//tensorflow:workspace.bzl', 'tf_workspace')
+tf_workspace()
+
+# Doodle Model Data
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+http_file(
+  name = 'doodle.tflite',
+  urls = ['https://github.com/maru-labo/doodle/releases/download/v1.0.0/doodle.tflite'],
+  sha256 = '03e4d1eb90e3e8113b1e5b09d4bff42def5e4224a7924fcad3752c22666bbe55',
+)
