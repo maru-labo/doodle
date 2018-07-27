@@ -1,5 +1,4 @@
-
-# Doodle for TensorFlow Lite on Raspberry Pi
+# The Doodle Classification by TensorFlow Lite (for Raspberry Pi)
 
 ![](./screenshot.png)
 
