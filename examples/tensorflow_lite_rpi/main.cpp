@@ -43,7 +43,7 @@ int const IMAGE_BYTES   = IMAGE_HEIGHT * IMAGE_WIDTH * IMAGE_CHANNEL;
 int main(int argc, char const* argv[]) {
   auto&& opt = parse_args(argc, argv);
   if(opt.model_path.empty()) {
-    std::cerr << "Must be specify model file path." << std::endl;
+    std::cerr << "Must specify the model file path." << std::endl;
     return -1;
   }
 
@@ -55,10 +55,10 @@ int main(int argc, char const* argv[]) {
   std::cout << "Loading model: " << opt.model_path << std::endl;
   model = tflite::FlatBufferModel::BuildFromFile(opt.model_path.c_str());
   if(!model) {
-    std::cerr << "Loading model failed." << std::endl;
+    std::cerr << "Failed to load the model." << std::endl;
     return -1;
   }
-  std::cout << "The model was successfully loaded." << std::endl;
+  std::cout << "The model was loaded successful." << std::endl;
 
   // Create TFLite interpreter.
   tflite::ops::builtin::BuiltinOpResolver resolver;
@@ -74,7 +74,7 @@ int main(int argc, char const* argv[]) {
   interpreter->SetNumThreads(4);
   status = interpreter->AllocateTensors();
   if(is_error(status)) {
-    std::cerr << "Failed to allocate tensor's memory." << std::endl;
+    std::cerr << "Failed to allocate the memory for tensors." << std::endl;
     return -1;
   }
 
@@ -83,8 +83,7 @@ int main(int argc, char const* argv[]) {
   float* probabilities = interpreter->typed_output_tensor<float>(0);
 
   char data[IMAGE_BYTES];
-  auto is_load = load_data(opt.input_file, data, IMAGE_BYTES);
-  if(!is_load) return -1;
+  if(load_data(opt.input_file, data, IMAGE_BYTES) != 0) return -1;
 
   // Fill input tensor.
   for(int h = 0; h < IMAGE_HEIGHT; ++h) {
@@ -111,7 +110,7 @@ int main(int argc, char const* argv[]) {
   auto end = std::chrono::system_clock::now();
 
   if(is_error(status)) {
-    std::cerr << "Failed the invocation of inference." <<std::endl;
+    std::cerr << "Failed to invoke the interpreter." <<std::endl;
     return -1;
   }
 

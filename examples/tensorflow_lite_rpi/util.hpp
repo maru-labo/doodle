@@ -66,11 +66,11 @@ bool is_valid_model(std::unique_ptr<tflite::Interpreter> const& interpreter) {
     print_tensor_info(tensor);
   }
   if(inputs.size() != 1) {
-    std::printf("Input tensors number is expected 1. Got %d\n", inputs.size());
+    std::cerr << "Input tensors number must be 1. Got " << inputs.size() << std::endl;
     return false;
   }
   if(outputs.size() != 1) {
-    std::printf("Output tensor number is expected 1. Got %d\n", outputs.size());
+    std::cerr << "Output tensors number must be 1. Got " << outputs.size() << std::endl;
     return false;
   }
   return true;
