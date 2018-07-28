@@ -18,6 +18,7 @@
 */
 package net.marulabo.doodle;
 
+import android.content.res.AssetManager;
 import android.content.res.AssetFileDescriptor;
 import android.app.ProgressDialog;
 import android.graphics.Color;
@@ -42,8 +43,18 @@ import org.tensorflow.lite.Interpreter;
 
 public class MainActivity extends AppCompatActivity {
   static final String TAG = "DOODLE";
-  static final String MODEL_FILENAME = "doodle.tflite";
+  static final String MODEL_FILENAME = "downloaded";
   static final int THREAD_NUM = 4;
+  static final int NUMBER_CLASSES = 10;
+  static final int IMAGE_PIXELS = 784;
+  static final int IMAGE_HEIGHT = 28;
+  static final int IMAGE_WIDTH = 28;
+  static final int IMAGE_CHANNEL = 1;
+  static final int BATCH = 1;
+  static final String[] LABELS = {
+    "apple", "bed", "cat", "dog", "eye",
+    "fish", "grass", "hand", "ice creame", "jacket",
+  };
 
   protected Interpreter tflite;
   protected Button recognize;
@@ -51,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
   protected TextView result;
   protected CanvasView canvas;
 
-  private float[] image = null;
-  private float[] probabilities = null;
+  private float[][][][] image = null;
+  private float[][] probabilities = null;
 
   private void print(String text){
     result.setText(result.getText() + text + "\n");
@@ -70,24 +81,38 @@ public class MainActivity extends AppCompatActivity {
       @Override
       public void onClick(View v) {
         int pixels[] = canvas.getPixels();
-        float image[] = new float[pixels.length];
-        for(int i = 0; i < pixels.length; ++i){
-          image[i] = Color.alpha(pixels[i]) / 255.f;
-        }
-        tflite.run(image, probabilities);
-
-        result.setText("");
-        int bestIndex = 0;
-        float bestScore = probabilities[0];
-        for(int i = 1; i < probabilities.length; ++i) {
-          if(bestScore < probabilities[i]){
-            bestScore = probabilities[i];
-            bestIndex = i;
+        assert(pixels.length == IMAGE_PIXELS);
+        for(int b = 0; b < BATCH; ++b){
+          for(int h = 0; h < IMAGE_HEIGHT; ++h){
+            for(int w = 0; w < IMAGE_WIDTH; ++w){
+              for(int c = 0; c < IMAGE_CHANNEL; ++c){
+                image[b][h][w][c] = Color.alpha(pixels[
+                  c
+                  + (IMAGE_CHANNEL * w)
+                  + (IMAGE_CHANNEL * IMAGE_WIDTH * h)
+                  + (IMAGE_CHANNEL * IMAGE_WIDTH * IMAGE_HEIGHT * b)
+                ]) / 255.f;
+              }
+            }
           }
         }
-        print("予測: " + bestIndex);
-        for(int i = 0; i < probabilities.length; ++i) {
-          print(i + ": " + probabilities[i]);
+        print("filled inputs");
+        tflite.run(image, probabilities);
+        print("finished run inference");
+
+        result.setText("");
+        float[] P = probabilities[0];
+        int classes = 0;
+        float bestScore = P[0];
+        for(int i = 1; i < P.length; ++i) {
+          if(bestScore < P[i]){
+            bestScore = P[i];
+            classes = i;
+          }
+        }
+        print(String.format("%11s: %s", "Prediction", LABELS[classes]));
+        for(int i = 0; i < P.length; ++i) {
+          print(String.format("%11s: %7.4f%%", LABELS[i], 100.f * P[i]));
         }
       }
     });
@@ -99,15 +124,22 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
+    image = new float[BATCH][IMAGE_HEIGHT][IMAGE_WIDTH][IMAGE_CHANNEL];
+    probabilities = new float[BATCH][NUMBER_CLASSES];
+
     // Initialize the model
     try {
-      AssetFileDescriptor modelFd = getAssets().openFd(MODEL_FILENAME);
+      AssetManager assets = getAssets();
+      for(String file : assets.list("")) {
+        print(file + "\n");
+      }
+      AssetFileDescriptor modelFd = assets.openFd(MODEL_FILENAME);
       MappedByteBuffer model = loadModelFile(modelFd);
       tflite = new Interpreter(model, THREAD_NUM);
       tflite.setUseNNAPI(true);
       recognize.setEnabled(true);
     } catch(IOException e) {
-      print("モデルの読み込みに失敗しました。");
+      print("モデルの読み込みに失敗しました: " + e.getMessage() + "\n");
       return;
     }
   }

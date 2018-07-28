@@ -7,6 +7,8 @@ android_sdk_repository(
   #api_level = 28,
   #build_tools_version = '26.1.1',
 )
+
+
 android_ndk_repository(
   name='androidndk',
   path='/Users/ornew/android/ndk-r16b',
@@ -45,6 +47,17 @@ git_repository(
 )
 load('@org_tensorflow//tensorflow:workspace.bzl', 'tf_workspace')
 tf_workspace()
+
+# TensorFlow Lite pre-built AAR
+load('@gmaven_rules//:import_external.bzl', 'aar_import_external')
+aar_import_external(
+  name = "org_tensorflow_tensorflow_lite",
+  licenses = ['notice'],
+  aar_urls = [
+    'https://google.bintray.com/tensorflow/org/tensorflow/tensorflow-lite/1.9.0/tensorflow-lite-1.9.0.aar',
+  ],
+  aar_sha256 = 'b5a0c9c2063b56318b642ad9388c06865a5d7392fa5205074825b2615ddba267',
+)
 
 # Doodle Model Data
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
