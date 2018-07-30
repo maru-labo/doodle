@@ -1,4 +1,5 @@
 package(default_visibility = ['//visibility:public'])
+licenses(["notice"]) # MIT license
 
 load('@gmaven_rules//:defs.bzl', 'gmaven_artifact')
 
