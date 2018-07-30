@@ -29,14 +29,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.text.NumberFormat;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.MappedByteBuffer;
-import java.util.Locale;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
