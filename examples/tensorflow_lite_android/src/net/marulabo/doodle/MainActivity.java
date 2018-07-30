@@ -29,12 +29,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.text.NumberFormat;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.MappedByteBuffer;
+import java.util.Locale;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -96,11 +98,14 @@ public class MainActivity extends AppCompatActivity {
             }
           }
         }
-        print("filled inputs");
+
+        long startTime = System.nanoTime();
         tflite.run(image, probabilities);
-        print("finished run inference");
+        long endTime = System.nanoTime();
+        double ms = (endTime - startTime) / 1000000.0;
 
         result.setText("");
+        print(String.format("Inference Time: %10f(ms)", ms));
         float[] P = probabilities[0];
         int classes = 0;
         float bestScore = P[0];
@@ -110,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
             classes = i;
           }
         }
-        print(String.format("%11s: %s", "Prediction", LABELS[classes]));
+        print(String.format("%11s: %s", "Predictions", LABELS[classes]));
         for(int i = 0; i < P.length; ++i) {
           print(String.format("%11s: %7.4f%%", LABELS[i], 100.f * P[i]));
         }
@@ -130,16 +135,14 @@ public class MainActivity extends AppCompatActivity {
     // Initialize the model
     try {
       AssetManager assets = getAssets();
-      for(String file : assets.list("")) {
-        print(file + "\n");
-      }
       AssetFileDescriptor modelFd = assets.openFd(MODEL_FILENAME);
       MappedByteBuffer model = loadModelFile(modelFd);
       tflite = new Interpreter(model, THREAD_NUM);
       tflite.setUseNNAPI(true);
       recognize.setEnabled(true);
+      print("The model was loaded successful.");
     } catch(IOException e) {
-      print("モデルの読み込みに失敗しました: " + e.getMessage() + "\n");
+      print("Failed to load the model: " + e.getMessage() + "\n");
       return;
     }
   }
