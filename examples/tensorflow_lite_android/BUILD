@@ -25,7 +25,7 @@ android_binary(
   srcs = glob(['src/**/*.java']),
   assets = ['@doodle.tflite//file'],
   assets_dir = '',
-  #nocompress_extensions = ['.tflite'],
+  nocompress_extensions = ['.tflite'],
   resource_files = glob(['res/**']),
   tags = ['manual'],
   deps = [
