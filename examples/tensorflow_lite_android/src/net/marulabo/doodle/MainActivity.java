@@ -65,10 +65,6 @@ public class MainActivity extends AppCompatActivity {
   private float[][][][] image = null;
   private float[][] probabilities = null;
 
-  private void print(String text){
-    result.setText(result.getText() + text + "\n");
-  }
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -80,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     recognize.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
+        // Fill input pixels.
         int pixels[] = canvas.getPixels();
         assert(pixels.length == IMAGE_PIXELS);
         for(int b = 0; b < BATCH; ++b){
@@ -97,25 +94,22 @@ public class MainActivity extends AppCompatActivity {
           }
         }
 
+        // Run inference.
         long startTime = System.nanoTime();
         tflite.run(image, probabilities);
         long endTime = System.nanoTime();
         double ms = (endTime - startTime) / 1000000.0;
 
+        // Show prediction result.
         result.setText("");
         print(String.format("Inference Time: %10f(ms)", ms));
-        float[] P = probabilities[0];
-        int classes = 0;
-        float bestScore = P[0];
-        for(int i = 1; i < P.length; ++i) {
-          if(bestScore < P[i]){
-            bestScore = P[i];
-            classes = i;
-          }
-        }
-        print(String.format("%11s: %s", "Predictions", LABELS[classes]));
-        for(int i = 0; i < P.length; ++i) {
-          print(String.format("%11s: %7.4f%%", LABELS[i], 100.f * P[i]));
+        float[] prob = probabilities[0];
+        int classes = argMax(prob);
+        print(String.format("Predict: %s (%3.2f%%)",
+              LABELS[classes], 100.f * prob[classes]));
+        print("Details:");
+        for(int i = 0; i < prob.length; ++i) {
+          print(String.format("- %11s: %7.4f%%", LABELS[i], 100.f * prob[i]));
         }
       }
     });
@@ -127,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
+    // for Input/Output tensor.
     image = new float[BATCH][IMAGE_HEIGHT][IMAGE_WIDTH][IMAGE_CHANNEL];
     probabilities = new float[BATCH][NUMBER_CLASSES];
 
@@ -143,6 +138,22 @@ public class MainActivity extends AppCompatActivity {
       print("Failed to load the model: " + e.getMessage() + "\n");
       return;
     }
+  }
+
+  private void print(String text){
+    result.setText(result.getText() + text + "\n");
+  }
+
+  private int argMax(float[] array) {
+    int index = 0;
+    float max = array[0];
+    for(int i = 1; i < array.length; ++i) {
+      if(max < array[i]){
+        max = array[i];
+        index = i;
+      }
+    }
+    return index;
   }
 
   private MappedByteBuffer loadModelFile(AssetFileDescriptor file) throws IOException {
