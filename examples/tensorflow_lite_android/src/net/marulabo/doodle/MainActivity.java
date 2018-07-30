@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     "fish", "grass", "hand", "ice creame", "jacket",
   };
 
-  protected Interpreter tflite;
+  protected Interpreter interpreter;
   protected Button recognize;
   protected Button clear;
   protected TextView result;
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Run inference.
         long startTime = System.nanoTime();
-        tflite.run(image, probabilities);
+        interpreter.run(image, probabilities);
         long endTime = System.nanoTime();
         double ms = (endTime - startTime) / 1000000.0;
 
@@ -128,10 +128,9 @@ public class MainActivity extends AppCompatActivity {
     // Initialize the model
     try {
       AssetManager assets = getAssets();
-      AssetFileDescriptor modelFd = assets.openFd(MODEL_FILENAME);
-      MappedByteBuffer model = loadModelFile(modelFd);
-      tflite = new Interpreter(model, THREAD_NUM);
-      tflite.setUseNNAPI(true);
+      MappedByteBuffer model = loadAssetToMemory(assets, MODEL_FILENAME);
+      interpreter = new Interpreter(model, THREAD_NUM);
+      interpreter.setUseNNAPI(true);
       recognize.setEnabled(true);
       print("The model was loaded successful.");
     } catch(IOException e) {
@@ -156,11 +155,12 @@ public class MainActivity extends AppCompatActivity {
     return index;
   }
 
-  private MappedByteBuffer loadModelFile(AssetFileDescriptor file) throws IOException {
-    FileInputStream inputStream = new FileInputStream(file.getFileDescriptor());
-    FileChannel fileChannel = inputStream.getChannel();
+  private MappedByteBuffer loadAssetToMemory(AssetManager assets, String path) throws IOException {
+    AssetFileDescriptor file = assets.openFd(path);
+    FileInputStream stream = new FileInputStream(file.getFileDescriptor());
+    FileChannel channel = stream.getChannel();
     long startOffset = file.getStartOffset();
     long declaredLength = file.getDeclaredLength();
-    return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+    return channel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
   }
 }
