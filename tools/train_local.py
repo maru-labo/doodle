@@ -42,8 +42,7 @@ def train_local(
   _model_dir = os.path.join(model_dir, name)
   _run_config = tf.estimator.RunConfig(
     model_dir=_model_dir,
-    **run_config,
-  )
+    **run_config)
 
   _train_spec = tf.estimator.TrainSpec(
     input_fn=lambda: train_input_fn(data_dir, params),
