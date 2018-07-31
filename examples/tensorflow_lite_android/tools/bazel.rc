@@ -1,0 +1,6 @@
+
+build \
+  --color=yes \
+  --cxxopt='--std=c++11' \
+  -c opt \
+  --fat_apk_cpu=x86,x86_64,armeabi-v7a

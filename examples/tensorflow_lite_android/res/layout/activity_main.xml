@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/activity_main"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:paddingLeft="@dimen/activity_horizontal_margin"
+  android:paddingRight="@dimen/activity_horizontal_margin"
+  android:paddingTop="@dimen/activity_vertical_margin"
+  android:paddingBottom="@dimen/activity_vertical_margin"
+  tools:context="net.marulabo.doodle.MainActivity"
+  android:orientation="vertical"
+  android:weightSum="1"
+  android:background="#eee"
+  android:gravity="center">
+
+  <net.marulabo.doodle.CanvasView
+    android:layout_height="560px"
+    android:layout_width="560px"
+    android:layout_alignParentTop="true"
+    android:layout_centerHorizontal="true"
+    android:id="@+id/canvas"
+    android:background="#fff" />
+
+  <LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="560px"
+    android:layout_height="wrap_content">
+
+    <Button
+      android:text="clear"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:id="@+id/clear"
+      android:layout_weight="1"
+      android:layout_marginTop="11dp" />
+
+    <Button
+      android:text="recognize"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/view"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="11dp"
+      android:id="@+id/recognize"
+      style="@style/Widget.AppCompat.Button.Colored"
+      android:enabled="false"
+      android:layout_weight="1" />
+  </LinearLayout>
+
+  <ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:fontFamily="monospace"
+      android:id="@+id/result" />
+  </ScrollView>
+
+</LinearLayout>
