@@ -76,6 +76,7 @@ if __name__ == '__main__':
   p.add_argument('-L','--log-level', default='DEBUG')
   args = p.parse_args()
   config = yaml.load(open(args.config))
+  tf.logging.set_verbosity(args.log_level)
   if type(config) is list:
     for c in config:
       print(c)
