@@ -5,6 +5,21 @@ The learning data uses "[The Quick, Draw! Dataset](https://github.com/googlecrea
 
 The model binaries are included in the release.
 
+There is the program source code in `src/doodle` directory.
+
+- `model.py`: The model definition.
+- `inputs.py`: Dataset preprocess definition.
+- `metrics.py`: Metrics calculations.
+
+## About Datasets
+
+Data is not included in this repository.
+The data setup program downloads "The Quick, Draw! Dataset".
+
+It data made available by Google, Inc.
+under the Creative Commons Attribution 4.0 International license.
+https://creativecommons.org/licenses/by/4.0/
+
 ## Examples
 
 ![](./screenshot.png)
@@ -21,15 +36,6 @@ The model binaries are included in the release.
 ### for Android
 
 - `examples/tensorflow_lite_android`: TensorFlow Lite (Java)
-
-## About Datasets
-
-Data is not included in this repository.
-The data setup program downloads "The Quick, Draw! Dataset".
-
-It data made available by Google, Inc.
-under the Creative Commons Attribution 4.0 International license.
-https://creativecommons.org/licenses/by/4.0/
 
 ## How to use
 
@@ -100,14 +106,6 @@ micro_average/f_measure       : 0.868749916553
 micro_average/precision       : 0.868749976158
 micro_average/recall          : 0.868749976158
 ```
-
-## Source Code
-
-The program source code is there in `src/doodle` directory.
-
-- `model.py`: The model definition.
-- `inputs.py`: Dataset preprocess definition.
-- `metrics.py`: Metrics calculations.
 
 ## License
 
