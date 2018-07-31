@@ -29,13 +29,13 @@ https://creativecommons.org/licenses/by/4.0/
 - `examples/tensorflow_js_simple`: TensorFlow.js + PWA
 - `examples/tensorflow_js`: TensorFlow.js + Vue.js
 
-### for Raspberry Pi
-
-- `examples/tensorflow_lite_rpi`: TensorFlow Lite (C++)
-
 ### for Android
 
 - `examples/tensorflow_lite_android`: TensorFlow Lite (Java)
+
+### for Raspberry Pi
+
+- `examples/tensorflow_lite_rpi`: TensorFlow Lite (C++)
 
 ## How to use
 
