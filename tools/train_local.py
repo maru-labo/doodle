@@ -63,7 +63,7 @@ def train_local(
 
   tf.estimator.train_and_evaluate(estimator, _train_spec, _eval_spec)
 
-  metrics = estimator.evaluate(_eval_spec.eval_input_fn, steps=_eval_spec.steps)
+  metrics = estimator.evaluate(_eval_spec.input_fn, steps=_eval_spec.steps)
   print('###### metrics ' + '#' * 65)
   for name, value in sorted(six.iteritems(metrics)):
     print('{:<30}: {}'.format(name, value))
