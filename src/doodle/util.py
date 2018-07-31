@@ -22,35 +22,7 @@
 import numpy as np
 
 def merge(xs):
-    y = dict()
-    for x in xs:
-        y.update(x)
-    return y
-
-DEFAULT_PARAMS = {
-    'num_classes'   : 10,
-    'train_batch_size' : 96,
-    'test_batch_size'  : 256,
-    'learning_rate' : 1e-4,
-    'dropout_rate'  : 0.4,
-    'initializer_normal_stddev' : 0.09,
-    'train_repeat_count' : -1,
-    'tfrecord_compression_type' : 'GZIP',
-    'tfrecord_parallel_reads_num' : None,
-    'train_tfrecord_files' : ['train.tfr'],
-    'test_tfrecord_files'  : ['test.tfr'],
-    'shuffle_buffer_size'  : 1024,
-    'prefetch_buffer_size' : 1024,
-}
-
-def with_default_params(params):
-    return merge([DEFAULT_PARAMS, params])
-
-def metrics_scope_variables(scope):
-    print('VariableScope: {}'.format(scope.name))
-    gv = scope.global_variables()
-    tv = scope.trainable_variables()
-    gvp = int(np.sum([np.prod(i.shape) for i in gv]))
-    tvp = int(np.sum([np.prod(i.shape) for i in tv]))
-    print('  number of global    variables(parameters): {:,}({:,})'.format(len(gv), gvp))
-    print('  number of trainable variables(parameters): {:,}({:,})'.format(len(tv), tvp))
+  y = dict()
+  for x in xs:
+    y.update(x)
+  return y

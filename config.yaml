@@ -1,0 +1,33 @@
+- name: doodle
+  src_dir: ./src
+  data_dir: ./data
+  model_dir: ./model
+  run_config:
+    keep_checkpoint_max: 5
+    log_step_count_steps: 10
+    tf_random_seed: 2018
+    save_summary_steps: 1
+  train_spec:
+    max_steps: 1000
+  eval_spec:
+    start_delay_secs: 60
+    steps: 10
+    throttle_secs: 60
+  params:
+    num_classes: 10
+    learning_rate: 0.0001
+    dropout_rate: 0.4
+    tfrecord_compression_type: GZIP
+    train_epochs: null
+    train_batch_size: 96
+    train_shuffle_buffer_size: 1024
+    train_prefetch_buffer_size: 1024
+    train_parallel_reads_num : null
+    train_tfrecord_files:
+    - train.tfr
+    eval_batch_size: 96
+    eval_shuffle_buffer_size: 96
+    eval_prefetch_buffer_size: 96
+    eval_parallel_reads_num: null
+    eval_tfrecord_files:
+    - eval.tfr

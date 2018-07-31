@@ -19,19 +19,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import tensorflow as tf
+import inputs
+import model
 
-def CNN(inputs, dropout_rate, is_training, scope=None):
-    with tf.variable_scope(scope, 'CNN', [inputs]):
-        x = inputs
-        x = tf.layers.conv2d(x, 32, 3, padding='SAME', activation=tf.nn.relu)
-        x = tf.layers.max_pooling2d(x, 2, 2, padding='SAME')
-        x = tf.layers.conv2d(x, 64, 3, padding='SAME', activation=tf.nn.relu)
-        x = tf.layers.max_pooling2d(x, 2, 2, padding='SAME')
-        #x = tf.layers.flatten(x)
-        #XXX: `tf.layers.flatten` contains unsupported op `StridedSlice` by TensorFlow.js. Use `tf.reshape` as bellow.
-        x = tf.reshape(x, [-1, 7*7*64])
-        #x = tf.layers.dense(x, 1024, activation=tf.nn.relu)
-        #x = tf.layers.dropout(x, rate=dropout_rate, training=is_training)
-        x = tf.layers.dense(x, 10)
-        return x
+def serving_input_fn():
+  return inputs.serving_input_fn()()
+
+def train_input_fn():
+  return inputs.train_input_fn()
+
+def eval_input_fn():
+  return inputs.eval_input_fn()
+
+def model_fn(features, labels, mode, params):
+  return model.model_fn(features, labels, mode, params)
