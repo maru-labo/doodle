@@ -19,4 +19,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .src import *
+import numpy as np
+
+def merge(xs):
+  y = dict()
+  for x in xs:
+    y.update(x)
+  return y

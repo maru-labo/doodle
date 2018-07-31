@@ -1,8 +1,0 @@
-model_config_list: {
-  config: {
-    name: "doodle",
-    base_path: "/var/lib/tensorflow-model/doodle",
-    model_platform: "tensorflow",
-    model_version_policy: { latest: {} },
-  },
-}
