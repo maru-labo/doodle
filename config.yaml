@@ -10,9 +10,9 @@
   train_spec:
     max_steps: 1000
   eval_spec:
-    start_delay_secs: 60
+    start_delay_secs: 10
     steps: 10
-    throttle_secs: 60
+    throttle_secs: 20
   params:
     num_classes: 10
     learning_rate: 0.0001
