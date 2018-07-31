@@ -70,7 +70,7 @@ import six
 import tensorflow as tf
 from util import merge
 
-def calculate(labels, classes, num_classes, add_summary=True, scope=None):
+def calculate(labels, classes, num_classes, scope=None):
   with tf.variable_scope(scope, 'metrics', [labels, classes]):
     cm = tf.confusion_matrix(labels, classes, num_classes=num_classes, dtype=tf.float32)
     ln = tf.reduce_sum(cm)
@@ -83,10 +83,6 @@ def calculate(labels, classes, num_classes, add_summary=True, scope=None):
       micro_metrics(tp, fp, tn, fn, eps),
       macro_metrics(tp, fp, tn, fn, num_classes, eps),
     ])
-
-  if add_summary:
-    for name, metric in six.iteritems(metric_ops):
-      tf.summary.scalar(name, metric[1])
 
   return metric_ops
 
