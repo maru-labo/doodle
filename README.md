@@ -7,6 +7,8 @@ The model binaries are included in the release.
 
 ## Examples
 
+![](./screenshot.png)
+
 ### for Web
 
 - `examples/tensorflow_js_simple`: TensorFlow.js + PWA
