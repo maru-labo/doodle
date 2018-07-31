@@ -72,7 +72,6 @@ if __name__ == '__main__':
   import argparse
   import yaml
   p = argparse.ArgumentParser()
-  p.add_argument('name')
   p.add_argument('-c', '--config', default='config.yaml')
   p.add_argument('-L','--log-level', default='DEBUG')
   args = p.parse_args()
