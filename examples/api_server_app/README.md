@@ -1,5 +1,7 @@
 
-# Example Web Application
+# (Deprecated) Example Web Application
+
+*Current TensorFlow Serving supports the REST API and does not require a proxy.*
 
 This application can test the model on the web.
 The `/api/prediction` endpoint proxies to a specific TensorFlow Serving API.
