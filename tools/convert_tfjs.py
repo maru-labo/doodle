@@ -28,7 +28,7 @@ DEFAULT_SIGNATURE = tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE
 DEFAULT_INPUTS = ['image']
 DEFAULT_OUTPUTS = ['classes','probabilities']
 
-def convert_to_webmodel(
+def convert_to_tfjs(
     savedmodel_dir,
     output_dir,
     tags,
@@ -87,7 +87,7 @@ if __name__ == '__main__':
   quantization_dtype = (
     quantization.QUANTIZATION_BYTES_TO_DTYPES[args.quantization_bytes]
     if args.quantization_bytes else None)
-  convert_to_webmodel(
+  convert_to_tfjs(
     args.savedmodel_dir,
     args.output_dir,
     args.tags,
