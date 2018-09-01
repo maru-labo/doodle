@@ -107,6 +107,29 @@ micro_average/precision       : 0.868749976158
 micro_average/recall          : 0.868749976158
 ```
 
+## How to convert the model format?
+
+### TFLite model format (`*.tflite`)
+
+Using `tools/convert_tflite.py` and your SavedModel directory
+(it have `saved_model.pb` file):
+
+```
+$ python ./tools/convert_tflite.py <path/to/your/savedmodel/dir> <filename/output.tflite>
+```
+
+More details can be seen: `python tools/convert_tflite.py -h`.
+
+### TensorFlow.js model format (`tensorflowjs_model.pb` and others)
+
+Using `tools/convert_tfjs.py` and your SavedModel directory.
+
+```
+$ python tools/convert_tfjs.py <path/to/your/savedmodel/dir> <path/to/output/dir>
+```
+
+More details can be seen: `python tools/convert_tflite.py -h`.
+
 ## License
 
 [MIT license](LICENSE)
