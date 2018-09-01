@@ -19,6 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import six
 import tensorflow as tf
 
 # Workaround for bugs. Details refer below:
@@ -40,7 +41,8 @@ def convert_to_tflite(
     tags,
     signature,
     inputs,
-    outputs
+    outputs,
+    quantized=True,
   ):
   with tf.Graph().as_default() as graph, tf.Session(graph=graph) as sess:
     meta_graph = tf.saved_model.loader.load(sess, tags, savedmodel_dir)
@@ -79,7 +81,8 @@ def convert_to_tflite(
 
     # Convert to FlatBuffers by TOCO.
     tflite_model = tf.contrib.lite.toco_convert(
-      frozen_graph_def, input_tensors, output_tensors)
+      frozen_graph_def, input_tensors, output_tensors,
+      quantize_weights=quantized)
 
     # Save
     with open(output_path, 'wb') as f:
@@ -90,17 +93,22 @@ if __name__ == '__main__':
   p = argparse.ArgumentParser()
   p.add_argument('savedmodel_dir')
   p.add_argument('output_path')
-  p.add_argument('--tags', default=DEFAULT_TAGS)
-  p.add_argument('--signature', default=DEFAULT_SIGNATURE)
-  p.add_argument('--inputs', default=DEFAULT_INPUTS)
-  p.add_argument('--outputs', default=DEFAULT_OUTPUTS)
+  p.add_argument('-t','--tags', default=DEFAULT_TAGS)
+  p.add_argument('-s','--signature', default=DEFAULT_SIGNATURE)
+  p.add_argument('-i','--inputs', default=DEFAULT_INPUTS)
+  p.add_argument('-o','--outputs', default=DEFAULT_OUTPUTS)
+  p.add_argument('-q', '--quantized', action='store_true', default=False)
   args = p.parse_args()
+  print('options:')
+  for a, v in sorted(six.iteritems(vars(args))):
+    print('  {}: {}'.format(a,v))
   convert_to_tflite(
     args.savedmodel_dir,
     args.output_path,
     args.tags,
     args.signature,
     args.inputs,
-    args.outputs
+    args.outputs,
+    args.quantized,
   )
 
